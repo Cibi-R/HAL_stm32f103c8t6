@@ -7,17 +7,17 @@
 
 UART_Handle_ST UART_Handle;
 
-#if UART_1_PERIPHERAL_ENABLE == ON
+#if (UART_1_PERIPHERAL_ENABLE == ON)
     uint8_t UART1_TxBuffer[UART1_TX_BUFFER_MAX_SIZE];
     uint8_t UART1_TxBufferIndex;
 #endif
 
-#if UART_1_PERIPHERAL_ENABLE == ON
+#if (UART_2_PERIPHERAL_ENABLE == ON)
     uint8_t UART2_TxBuffer[UART2_TX_BUFFER_MAX_SIZE];
     uint8_t UART2_TxBufferIndex;
 #endif
 
-#if UART_1_PERIPHERAL_ENABLE == ON
+#if (UART_2_PERIPHERAL_ENABLE == ON)
     uint8_t UART3_TxBuffer[UART3_TX_BUFFER_MAX_SIZE];
     uint8_t UART3_TxBufferIndex;
 #endif
@@ -114,43 +114,94 @@ void UART_Config_Init(UART_Config_ST* InitStruct)
 
 void UART_Tx_Bytes_Interrupt(USART_TypeDef *Handle,uint8_t BufferBase, uint8_t BufferSize)
 {
-    if ( (Handle == UART1) && (UART_Handle.UART1_Configured == 1) )
-    {
+	#if (UART_1_PERIPHERAL_ENABLE == ON)
 
+    if ( (Handle == UART1) && (UART_Handle.UART1_Configured == 1) && (UART_Handle.UART1_State == UART_State_Idle) )
+    {
+		UART_Handle.UART1_State = UART_State_Tx;
     }
 
-    else if ( (Handle == UART2) && (UART_Handle.UART2_Configured == 1) )
+	#endif //UART_1_PERIPHERAL_ENABLE
+
+	#if (UART_2_PERIPHERAL_ENABLE == ON)
+
+    if ( (Handle == UART2) && (UART_Handle.UART2_Configured == 1) && (UART1_Handle.UART1_State == UART_State_Idle))
     {
-        
+		UART_Handle.UART2_State = UART_State_Tx;
     }
 
-    else if ( (Handle == UART1) && (UART_Handle.UART3_Configured == 1) )
+	#endif //UART_2_PERIPHERAL_ENABLE
+
+	#if (UART_3_PERIPHERAL_ENABLE == ON)
+
+    if ( (Handle == UART3) && (UART_Handle.UART3_Configured == 1) && (UART1_Handle.UART1_State == UART_State_Idle) )
     {
-        
+        UART_Handle.UART2_State = UART_State_Tx;
     }
+
+	#endif //UART_3_PERIPHERAL_ENABLE
 
     else
     {
-        /* Do nothing. */
+		/* On failure it will return 0 */
+        return 0;
     }
-    
+
+	/* On success it will return 1. */
+	return 1; 
 }
 
-void UART_Tx_Bytes(uint8_t Bytes)
+void UART_Tx_Bytes(USART_TypeDef *Handle,uint8_t Bytes)
 {
+	#if (UART_1_PERIPHERAL_ENABLE == ON)
 
+	if ( (Handle == UART1) && (UART_Handle.UART1_Configured == 1) )
+    {
+
+    }
+
+	#if (UART_2_PERIPHERAL_ENABLE == ON)
+
+    if ( (Handle == UART2) && (UART_Handle.UART2_Configured == 1) )
+    {
+        
+    }
+
+	#if (UART_3_PERIPHERAL_ENABLE == ON)
+
+    if ( (Handle == UART1) && (UART_Handle.UART3_Configured == 1) )
+    {
+        
+    }
+
+	#endif //End
+
+	#if ((UART_1_PERIPHERAL_ENABLE == ON) || (UART_2_PERIPHERAL_ENABLE == ON) || (UART_3_PERIPHERAL_ENABLE == ON))
+
+    else
+    {
+        return 0;
+    }
+
+	return 1;
+
+	#elif
+
+	return 0;
+
+	#endif //End
 }
 
-void UART_Tx_String(uint8_t *Base)
+void UART_Tx_String(USART_TypeDef *Handle, uint8_t *Base)
 {
     while (*Base)
     {
-        UART_Tx_Bytes(*Base);
+        UART_Tx_Bytes(Handle,*Base);
         Base++;
     }
 }
 
-uint8_t UART_Rx_Bytes_Polling(void)
+uint8_t UART_Rx_Bytes_Polling(USART_TypeDef *Handle)
 {
 
 }

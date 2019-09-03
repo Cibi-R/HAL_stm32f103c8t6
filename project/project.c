@@ -2,6 +2,15 @@
 #include GPIO_H
 #include UART_APP_H
 
+void Delay()
+{
+	unsigned char i;
+	
+	for (i=0; i<10; i++)
+	{
+		
+	}
+}
 
 int main(void)
 {
@@ -12,7 +21,9 @@ int main(void)
 
     AFIOEN_CLOCK_ENABLE();
 
+	Delay();
+	
     UART_Init();
-
+	
     while (1);
 }

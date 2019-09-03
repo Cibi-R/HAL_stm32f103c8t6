@@ -47,10 +47,40 @@ void USART1_IRQHandler(void)
 
 void USART2_IRQHandler(void)
 {
+	/* Check TXE bit in control register. */
+	if (UART2->SR & (1<<7))
+	{
+		UART2->DR = UART2_Tx_Buffer[UART2_Tx_BufferIndex];
+
+		if (UART2_Tx_BufferIndex == UART2_Tx_BufferSize)
+		{
+			UART2->CR1 &= (~(1<<7));			
+		}
+
+		else
+		{
+			UART2_Tx_BufferIndex++;
+		}
+	}
 }
 
 void USART3_IRQHandler(void)
 {
+	/* Check TXE bit in control register. */
+	if (UART3->SR & (1<<7))
+	{
+		UART3->DR = UART3_Tx_Buffer[UART3_Tx_BufferIndex];
+
+		if (UART3_Tx_BufferIndex == UART3_Tx_BufferSize)
+		{
+			UART3->CR1 &= (~(1<<7));			
+		}
+
+		else
+		{
+			UART3_Tx_BufferIndex++;
+		}
+	}
 }
 
 /******************************************************************************************************************************
@@ -135,6 +165,9 @@ unsigned char UART_Config_Init(UART_Config_ST *InitStruct)
 		/* Configure the operating mode. */
 		Handle->CR1 &= (~(0x3 << 2));
 		Handle->CR1 |= (InitStruct->OperatingMode << 2);
+		
+		/* Enable USART Peripheral. */
+		Handle->CR1 |= (1<<13);
 
 		return 1;
 	}

@@ -5,203 +5,206 @@
  *												 Variable Definitions
  ******************************************************************************************************************************/
 
-UART_Handle_ST UART_Handle;
+UART_Watchdog_ST UART_Watchdog;
 
-#if (UART_1_PERIPHERAL_ENABLE == ON)
-    uint8_t UART1_TxBuffer[UART1_TX_BUFFER_MAX_SIZE];
-    uint8_t UART1_TxBufferIndex;
-#endif
+uint8_t UART1_Tx_Buffer[UART1_TX_BUFFER_MAX_SIZE];
+uint8_t UART2_Tx_Buffer[UART2_TX_BUFFER_MAX_SIZE];
+uint8_t UART3_Tx_Buffer[UART3_TX_BUFFER_MAX_SIZE];
 
-#if (UART_2_PERIPHERAL_ENABLE == ON)
-    uint8_t UART2_TxBuffer[UART2_TX_BUFFER_MAX_SIZE];
-    uint8_t UART2_TxBufferIndex;
-#endif
+uint8_t UART1_Tx_BufferSize;
+uint8_t UART2_Tx_BufferSize;
+uint8_t UART3_Tx_BufferSize;
 
-#if (UART_2_PERIPHERAL_ENABLE == ON)
-    uint8_t UART3_TxBuffer[UART3_TX_BUFFER_MAX_SIZE];
-    uint8_t UART3_TxBufferIndex;
-#endif
+uint8_t UART1_Tx_BufferIndex;
+uint8_t UART2_Tx_BufferIndex;
+uint8_t UART3_Tx_BufferIndex;
+
 
 /******************************************************************************************************************************
  *												  UART Subroutines
  ******************************************************************************************************************************/
 
-#if UART_1_PERIPHERAL_ENABLE == ON
+
 
 void USART1_IRQHandler(void)
 {
+	/* Check TXE bit in control register. */
+	if (UART1->SR & (1<<7))
+	{
+		UART1->DR = UART1_Tx_Buffer[UART1_Tx_BufferIndex];
 
+		if (UART1_Tx_BufferIndex == UART1_Tx_BufferSize)
+		{
+			UART1->CR1 &= (~(1<<7));			
+		}
+
+		else
+		{
+			UART1_Tx_BufferIndex++;
+		}
+	}
 }
-
-#endif //UART_1_PERIPHERAL_ENABLE
-
-#if UART_2_PERIPHERAL_ENABLE == ON
 
 void USART2_IRQHandler(void)
 {
-
 }
-
-#endif //UART_2_PERIPHERAL_ENABLE
-
-#if UART_3_PERIPHERAL_ENABLE == ON
 
 void USART3_IRQHandler(void)
 {
-
 }
-
-#endif //UART_3_PERIPHERAL_ENABLE
 
 /******************************************************************************************************************************
  *												 Function Definitions
  ******************************************************************************************************************************/
 
-static void UART_Config_Mode(USART_TypeDef *Handle,UART_Operating_Mode_EN Operating_Mode)
+static uint8_t Is_UART_Available(USART_TypeDef *Handle)
 {
-	/* Clear the Transmitter and Receiver enable bits. */
-	Handle->CR1 &= (~(0x3<<2));
-	
-	switch (Operating_Mode)
+	if ((Handle == UART1) && (UART_Watchdog.UART1_State != UART_State_Tx))
 	{
-		case UART_Transmitter:
-			Handle->CR1 |= (1<<3);
-			break;
-		
-		case UART_Receiver:
-			Handle->CR1 |= (1<<2);
-			break;
-		
-		case UART_Transceiver:
-			Handle->CR1 |= (0x3<<2);
-			break;
+		return 1;
+	}
+
+	else if ((Handle == UART2) && (UART_Watchdog.UART2_State != UART_State_Tx))
+	{
+		return 1;
+	}
+
+	else if ((Handle == UART3) && (UART_Watchdog.UART3_State != UART_State_Tx))
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+static void UART_Assign_State(USART_TypeDef *Handle,UART_State_EN CurrentState)
+{
+	if (Handle == UART1)
+	{
+		UART_Watchdog.UART1_State = CurrentState;
+	}
+
+	else if (Handle == UART2)
+	{
+		UART_Watchdog.UART2_State = CurrentState;
+	}
+
+	else if (Handle == UART3)
+	{
+		UART_Watchdog.UART3_State = CurrentState;
 	}
 }
 
-
-void UART_Config_Init(UART_Config_ST* InitStruct)
+unsigned char UART_Config_Init(UART_Config_ST *InitStruct)
 {
-    USART_TypeDef *Handle;
-	
+	USART_TypeDef *Handle;
+
 	Handle = InitStruct->Instance;
-	
-	/* Configure word length. */
-	Handle->CR1 &= (~(1<<12));
-	Handle->CR1 |= (InitStruct->WordLength << 12);
-	
-	/* Configure parity control and selection bits. */
-	if (InitStruct->ParitySelection != UART_No_Parity)
+
+	if ((UART1 == Handle) || (UART2 == Handle) || (UART3 == Handle))
 	{
-		/* Enable Parity Control. */
-		Handle->CR1 |= (1<<10);
-		
-		/* Parity Selection. */
-		Handle->CR1 &= (~(1<<9));
-		Handle->CR1 |= (InitStruct->ParitySelection<<9);
-	}else{ Handle->CR1 &= (~(1<<10)); /* Disable Parity Control. */ }
-	
-	/* Configure Stopbits. */
-	Handle->CR2 &= (~(0x3<<12));
-	Handle->CR2 |= (InitStruct->StopBits<<12);
-	
-	/* Configure Baudrates. */
-	Handle->BRR = 0;
-	Handle->BRR = (0xFFFF & InitStruct->BaudRate);
-	
-	/* Configure the operating mode. */
-	UART_Config_Mode(Handle,InitStruct->Operating_Mode);
-}
+		/* Configure the word length. */
+		Handle->CR1 &= (~(1 << 12));
+		Handle->CR1 |= (InitStruct->WordLength << 12);
 
-void UART_Tx_Bytes_Interrupt(USART_TypeDef *Handle,uint8_t BufferBase, uint8_t BufferSize)
-{
-	#if (UART_1_PERIPHERAL_ENABLE == ON)
+		/* Configure the parity control and selection bits. */
+		if (InitStruct->ParitySelection != UART_No_Parity)
+		{
+			/* Enable Parity Control. */
+			Handle->CR1 |= (1 << 10);
 
-    if ( (Handle == UART1) && (UART_Handle.UART1_Configured == 1) && (UART_Handle.UART1_State == UART_State_Idle) )
-    {
-		UART_Handle.UART1_State = UART_State_Tx;
-    }
+			/* Parity Selection. */
+			Handle->CR1 &= (~(1 << 9));
+			Handle->CR1 |= (InitStruct->ParitySelection << 9);
+		}
 
-	#endif //UART_1_PERIPHERAL_ENABLE
+		else
+		{
+			/* Disable Parity Control. */
+			Handle->CR1 &= (~(1 << 10)); 
+		}
 
-	#if (UART_2_PERIPHERAL_ENABLE == ON)
+		/* Configure the Stopbits. */
+		Handle->CR2 &= (~(0x3 << 12));
+		Handle->CR2 |= (InitStruct->StopBits << 12);
 
-    if ( (Handle == UART2) && (UART_Handle.UART2_Configured == 1) && (UART1_Handle.UART1_State == UART_State_Idle))
-    {
-		UART_Handle.UART2_State = UART_State_Tx;
-    }
+		/* Configure Baudrates. */
+		Handle->BRR = 0;
+		Handle->BRR = (0xFFFF & InitStruct->BaudRate);
 
-	#endif //UART_2_PERIPHERAL_ENABLE
+		/* Configure the operating mode. */
+		Handle->CR1 &= (~(0x3 << 2));
+		Handle->CR1 |= (InitStruct->OperatingMode << 2);
 
-	#if (UART_3_PERIPHERAL_ENABLE == ON)
-
-    if ( (Handle == UART3) && (UART_Handle.UART3_Configured == 1) && (UART1_Handle.UART1_State == UART_State_Idle) )
-    {
-        UART_Handle.UART2_State = UART_State_Tx;
-    }
-
-	#endif //UART_3_PERIPHERAL_ENABLE
-
-    else
-    {
-		/* On failure it will return 0 */
-        return 0;
-    }
-
-	/* On success it will return 1. */
-	return 1; 
-}
-
-void UART_Tx_Bytes(USART_TypeDef *Handle,uint8_t Bytes)
-{
-	#if (UART_1_PERIPHERAL_ENABLE == ON)
-
-	if ( (Handle == UART1) && (UART_Handle.UART1_Configured == 1) )
-    {
-
-    }
-
-	#if (UART_2_PERIPHERAL_ENABLE == ON)
-
-    if ( (Handle == UART2) && (UART_Handle.UART2_Configured == 1) )
-    {
-        
-    }
-
-	#if (UART_3_PERIPHERAL_ENABLE == ON)
-
-    if ( (Handle == UART1) && (UART_Handle.UART3_Configured == 1) )
-    {
-        
-    }
-
-	#endif //End
-
-	#if ((UART_1_PERIPHERAL_ENABLE == ON) || (UART_2_PERIPHERAL_ENABLE == ON) || (UART_3_PERIPHERAL_ENABLE == ON))
-
-    else
-    {
-        return 0;
-    }
-
-	return 1;
-
-	#elif
+		return 1;
+	}
 
 	return 0;
+}
 
-	#endif //End
+unsigned char UART_Tx_Bytes_Interrupt(USART_TypeDef *Handle, uint8_t *BufferBase, uint8_t BufferSize)
+{
+	uint8_t *TxBuffer;
+	uint8_t BufferMax;
+	uint8_t i;
+
+	if (Is_UART_Available(Handle))
+	{
+		if (Handle == UART1){ BufferMax = UART1_TX_BUFFER_MAX_SIZE; TxBuffer = UART1_Tx_Buffer; UART1_Tx_BufferSize = BufferSize; UART1_Tx_BufferIndex = 0; }
+
+		if (Handle == UART2){ BufferMax = UART2_TX_BUFFER_MAX_SIZE; TxBuffer = UART2_Tx_Buffer; UART2_Tx_BufferSize = BufferSize; UART2_Tx_BufferIndex = 0; }
+
+		if (Handle == UART3){ BufferMax = UART3_TX_BUFFER_MAX_SIZE; TxBuffer = UART3_Tx_Buffer; UART3_Tx_BufferSize = BufferSize; UART3_Tx_BufferIndex = 0; }
+
+
+		/* If the size of the Tx byte count is higher than the buffer size. Reset the buffersize to Maximum size. */
+		if (BufferSize > BufferMax)
+		{
+			BufferSize = BufferMax;
+		}
+
+		for (i = 0; i < BufferSize; i++)
+		{
+			TxBuffer[i] = BufferBase[i];
+		}
+
+		for (; i<BufferMax; i++)
+		{
+			TxBuffer[i] = 0;
+		}
+
+		/* Enable the Tx Buffer empty interrupt enable. */
+		Handle->CR1 |= (1<<7);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+void UART_Tx_Bytes(USART_TypeDef *Handle, uint8_t Bytes)
+{
+	while (!(Handle->SR & (1<<6)));
+
+	Handle->DR = Bytes;
 }
 
 void UART_Tx_String(USART_TypeDef *Handle, uint8_t *Base)
 {
-    while (*Base)
-    {
-        UART_Tx_Bytes(Handle,*Base);
-        Base++;
-    }
+	if (Is_UART_Available(Handle))
+	{
+		while (*Base)
+		{
+			UART_Tx_Bytes(Handle, *Base);
+			Base++;
+		}
+
+		UART_Assign_State(Handle, UART_State_Idle);
+	}
 }
 
 uint8_t UART_Rx_Bytes_Polling(USART_TypeDef *Handle)
 {
-
+	return 0;
+	/* To be implemented. */
 }

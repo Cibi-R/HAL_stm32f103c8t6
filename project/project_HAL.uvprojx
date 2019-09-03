@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -406,6 +406,16 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\core\stm32\uart\src\uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>stm32_application</GroupName>
+          <Files>
+            <File>
+              <FileName>uart_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\core\stm32_application\uart\src\uart_app.c</FilePath>
             </File>
           </Files>
         </Group>

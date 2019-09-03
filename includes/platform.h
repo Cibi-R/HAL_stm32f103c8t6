@@ -1,8 +1,8 @@
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
 
-#define ON             (uint8_t)1
-#define OFF            (uint8_t)0
+#define ON             1U
+#define OFF            0U
 
 #define TRUE           ON
 #define FALSE          OFF

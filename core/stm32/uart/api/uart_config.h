@@ -10,7 +10,6 @@
 #define UART2    USART2
 #define UART3    USART3
 
-
 #define UART1_TX_BUFFER_MAX_SIZE  (uint8_t)20
 #define UART2_TX_BUFFER_MAX_SIZE  (uint8_t)20
 #define UART3_TX_BUFFER_MAX_SIZE  (uint8_t)20

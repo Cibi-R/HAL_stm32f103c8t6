@@ -14,11 +14,19 @@
  *												  Preprocessor Constants
  ******************************************************************************************************************************/
 
+#define ENABLE_UART1_CLOCK()   RCC->APB2ENR |= (uint32_t)(1 << 14)
+
+
+/******************************************************************************************************************************
+ *												    Typde Definitions
+ ******************************************************************************************************************************/
+
 typedef enum UART_State_EN
 {
     UART_State_Idle,
     UART_State_Tx,
     UART_State_Rx,
+    UART_State_TxRx,
     UART_State_Err,
 }UART_State_EN;
 
@@ -31,9 +39,9 @@ typedef enum _UART_Baudrate_EN
 
 typedef enum _UART_Operating_Mode_EN
 {
-    UART_Transmitter = 0,
     UART_Receiver = 1,
-    UART_Transceiver = 2,
+    UART_Transmitter,
+    UART_Transceiver,
 }UART_Operating_Mode_EN;
 
 typedef enum _UART_WordLength_EN
@@ -61,16 +69,13 @@ typedef enum _UART_StopBits_EN
     UART_15_StopBit,
 }UART_StopBits_EN;
 
-typedef struct _UART_Handle_ST
+typedef struct _UART_Watchdog_ST
 {
-    uint16_t UART1_Configured : 1;
-    uint16_t UART2_Configured : 1;
-    uint16_t UART3_Configured : 1;
-    uint16_t UART1_State : 2;
-    uint16_t UART2_State : 2;
-    uint16_t UART3_State : 2;
-    uint16_t Reserved : 7;
-}UART_Handle_ST;
+    uint8_t UART1_State : 2;
+    uint8_t UART2_State : 2;
+    uint8_t UART3_State : 2;
+    uint8_t Reserved : 2;
+}UART_Watchdog_ST;
 
 
 typedef struct _UART_Config_ST
@@ -90,9 +95,29 @@ typedef struct _UART_Config_ST
 	UART_Baudrate_EN BaudRate;
 	
 	/* To configure the operating mode. */
-	UART_Operating_Mode_EN Operating_Mode;
+	UART_Operating_Mode_EN OperatingMode;
 }UART_Config_ST;
 
-extern UART_Handle_ST UART_Handle;
+/******************************************************************************************************************************
+ *												  Variable Declaration
+ ******************************************************************************************************************************/
+
+
+extern UART_Watchdog_ST UART_Watchdog;
+
+
+/******************************************************************************************************************************
+ *												  Function Declaration
+ ******************************************************************************************************************************/
+
+extern unsigned char UART_Config_Init(UART_Config_ST *InitStruct);
+
+extern unsigned char UART_Tx_Bytes_Interrupt(USART_TypeDef *Handle, uint8_t *BufferBase, uint8_t BufferSize);
+
+extern void UART_Tx_Bytes(USART_TypeDef *Handle, uint8_t Bytes);
+
+extern void UART_Tx_String(USART_TypeDef *Handle, uint8_t *Base);
+
+extern uint8_t UART_Rx_Bytes_Polling(USART_TypeDef *Handle);
 
 #endif //__UART_H__

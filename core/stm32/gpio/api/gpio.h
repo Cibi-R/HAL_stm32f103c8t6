@@ -6,6 +6,7 @@
  *												      Preprocessor Constants
  ******************************************************************************************************************************/
 
+#define AFIOEN_CLOCK_ENABLE()  RCC->APB2ENR |= (1<<0)
 
 #define PORTA_CLOCK_ENABLE()   RCC->APB2ENR |= (1<<2)
 #define PORTB_CLOCK_ENABLE()   RCC->APB2ENR |= (1<<3)

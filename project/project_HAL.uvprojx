@@ -369,7 +369,7 @@
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile></ScatterFile>
+            <ScatterFile>.\Objects\project_HAL.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -407,6 +407,11 @@
               <FileType>1</FileType>
               <FilePath>..\core\stm32\uart\src\uart.c</FilePath>
             </File>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\core\stm32\flash\src\flash.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -416,6 +421,11 @@
               <FileName>uart_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\core\stm32_application\uart\src\uart_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\core\stm32_application\flash\src\flash_app.c</FilePath>
             </File>
           </Files>
         </Group>

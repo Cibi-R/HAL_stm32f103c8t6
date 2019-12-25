@@ -1,6 +1,22 @@
 #include <includes.h>
+#include <string.h>
 #include GPIO_H
 #include UART_H
+
+void Test1(void)
+{
+	UART_Tx_Bytes(UART1, UART_Rx_Bytes(UART1));
+}
+
+void Test2(void)
+{
+	UART_Tx_Bytes(UART2, UART_Rx_Bytes(UART2));
+}
+
+void Test3(void)
+{
+	UART_Tx_Bytes(UART3, UART_Rx_Bytes(UART3));
+}
 
 static void UART_Config_Pin(void)
 {
@@ -62,8 +78,8 @@ static void UART_Config_Pin(void)
 void UART_Init(void)
 {
 	/* Test Strings */
-	uint8_t String1[] = "Interrupt Method\r\n";
-	uint8_t String2[] = "Polling Method\r\n";
+	uint8_t String[] = "String Function Working!\n\r";
+	uint8_t Array[] = "Array Function Working!\n\r";
 	
 	/* Instantiate variable to configure UART peripherals. */
     UART_Config_ST uart1;
@@ -76,6 +92,8 @@ void UART_Init(void)
     uart1.StopBits = UART_1_StopBit;
     uart1.BaudRate = UART_Baud_9600;
     uart1.OperatingMode = UART_Transceiver;
+	uart1.UART_Rx_ISR = Test1;
+	
 
 	uart2.Instance = UART2;
     uart2.WordLength = UART_8Bit;
@@ -83,6 +101,7 @@ void UART_Init(void)
     uart2.StopBits = UART_1_StopBit;
     uart2.BaudRate = UART_Baud_9600;
     uart2.OperatingMode = UART_Transceiver;
+	uart2.UART_Rx_ISR = Test2;
 
 	uart3.Instance = UART3;
     uart3.WordLength = UART_8Bit;
@@ -90,24 +109,35 @@ void UART_Init(void)
     uart3.StopBits = UART_1_StopBit;
     uart3.BaudRate = UART_Baud_9600;
     uart3.OperatingMode = UART_Transceiver;
+	uart3.UART_Rx_ISR = Test3;
 
+	/*< Enable clock of the UART. */
     ENABLE_UART1_CLOCK();
 	ENABLE_UART2_CLOCK();
 	ENABLE_UART3_CLOCK();
 	
+	/*< Enable the UART interrupt. */
 	NVIC_EnableIRQ(USART1_IRQn);
 	NVIC_EnableIRQ(USART2_IRQn);
 	NVIC_EnableIRQ(USART3_IRQn);
 
+	/*< Configure the UART pins. */
     UART_Config_Pin();
 
+	/*< Configure UART. */
     UART_Config_Init(&uart1);
 	UART_Config_Init(&uart2);
 	UART_Config_Init(&uart3);
 	
-	/* USART Interrupt method. */
-	//UART_Tx_Bytes_Interrupt(UART3,String1,18);
+	/*< Send String. */
+	UART_Tx_String(UART1,String);
+	UART_Tx_String(UART2,String);
+	UART_Tx_String(UART3,String);
 
-	/* USART Polling method. */
-	UART_Tx_String(UART1,String2);
+	/*< Send Array. */
+	UART_Tx_Array(UART1,Array,sizeof(Array));
+	UART_Tx_Array(UART2,Array,sizeof(Array));
+	UART_Tx_Array(UART3,Array,sizeof(Array));
 }
+
+

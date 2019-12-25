@@ -2,15 +2,9 @@
 #include GPIO_H
 #include UART_APP_H
 
-void Delay()
-{
-	unsigned char i;
-	
-	for (i=0; i<10; i++)
-	{
-		
-	}
-}
+
+void Blink_Led(void);
+void Delay(void);
 
 int main(void)
 {
@@ -20,10 +14,9 @@ int main(void)
     PORTD_CLOCK_ENABLE();
 
     AFIOEN_CLOCK_ENABLE();
-
-	Delay();
 	
     UART_Init();
 	
     while (1);
 }
+

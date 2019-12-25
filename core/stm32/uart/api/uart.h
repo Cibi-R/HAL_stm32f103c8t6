@@ -3,16 +3,12 @@
 
 #include "uart_config.h"
 
-/******************************************************************************************************************************
- *												  Driver Control Selection
- ******************************************************************************************************************************/
-
-
-
 
 /******************************************************************************************************************************
  *												  Preprocessor Constants
  ******************************************************************************************************************************/
+
+//#define NULL ((void*)0)
 
 #define ENABLE_UART1_CLOCK()   RCC->APB2ENR |= (uint32_t)(1 << 14)
 #define ENABLE_UART2_CLOCK()   RCC->APB1ENR |= (uint32_t)(1 << 17)
@@ -22,15 +18,6 @@
 /******************************************************************************************************************************
  *												    Typde Definitions
  ******************************************************************************************************************************/
-
-typedef enum UART_State_EN
-{
-    UART_State_Idle,
-    UART_State_Tx,
-    UART_State_Rx,
-    UART_State_TxRx,
-    UART_State_Err,
-}UART_State_EN;
 
 typedef enum _UART_Baudrate_EN
 {
@@ -71,14 +58,6 @@ typedef enum _UART_StopBits_EN
     UART_15_StopBit,
 }UART_StopBits_EN;
 
-typedef struct _UART_Watchdog_ST
-{
-    uint8_t UART1_State : 2;
-    uint8_t UART2_State : 2;
-    uint8_t UART3_State : 2;
-    uint8_t Reserved : 2;
-}UART_Watchdog_ST;
-
 
 typedef struct _UART_Config_ST
 {
@@ -98,28 +77,58 @@ typedef struct _UART_Config_ST
 	
 	/* To configure the operating mode. */
 	UART_Operating_Mode_EN OperatingMode;
+
+    /* Assign the address of the function to be handled during UART reception if not used assign NULL */
+    void (*UART_Rx_ISR)(void);
 }UART_Config_ST;
-
-/******************************************************************************************************************************
- *												  Variable Declaration
- ******************************************************************************************************************************/
-
-
-extern UART_Watchdog_ST UART_Watchdog;
 
 
 /******************************************************************************************************************************
  *												  Function Declaration
  ******************************************************************************************************************************/
 
-extern unsigned char UART_Config_Init(UART_Config_ST *InitStruct);
+/*
+ * @brief  : To Configure the UART peripheral
+ * @para   : UART Init struct
+ * @return : HAL_Status - indicating that the initialization is succeeded or not.
+ */
 
-extern unsigned char UART_Tx_Bytes_Interrupt(USART_TypeDef *Handle, uint8_t *BufferBase, uint8_t BufferSize);
+extern HAL_Status UART_Config_Init(UART_Config_ST *InitStruct);
 
-extern void UART_Tx_Bytes(USART_TypeDef *Handle, uint8_t Bytes);
 
-extern void UART_Tx_String(USART_TypeDef *Handle, uint8_t *Base);
+/*
+ * @brief  : To Send 1 byte through UART
+ * @para   : USART_Typtedef - Base Add of UART through which we are transmitting, uint8_t. Byte to be transmitted.
+ * @return : HAL_Status - Status of transmission
+ */
 
-extern uint8_t UART_Rx_Bytes_Polling(USART_TypeDef *Handle);
+extern HAL_Status UART_Tx_Bytes(USART_TypeDef*, uint8_t Data);
+
+
+/*
+ * @brief  : To Send an Array of bytes through array.
+ * @para   : USART_Typtedef - Base Add of UART through which we are transmitting, uint8_t - Base add of array, uint8_t - Len of array
+ * @return : HAL_Status - Transmission status.
+ */
+
+extern HAL_Status UART_Tx_Array(USART_TypeDef *Handle, uint8_t *const Base, uint8_t Len);
+
+
+/*
+ * @brief  : To send string through UART.
+ * @para   : USART_Typtedef - Base Add of UART through which we are transmitting, Base Add of string.
+ * @return : HAL_Status - Transmission status.
+ */
+
+extern HAL_Status UART_Tx_String(USART_TypeDef *Handle, const uint8_t *Data);
+
+
+/*
+ * @brief  : To retrieve the received byte. This function should be called inside UART_Rx_ISR function.
+ * @para   : USART_Typtedef - Base Add of UART
+ * @return : uint8_t - Retrieved bytes.
+ */
+
+extern uint8_t UART_Rx_Bytes(USART_TypeDef *Handle);
 
 #endif //__UART_H__

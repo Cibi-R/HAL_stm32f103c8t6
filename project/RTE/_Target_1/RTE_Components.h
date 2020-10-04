@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'project_HAL' 
+ * Project: 'stm32_HAL' 
  * Target:  'Target 1' 
  */
 

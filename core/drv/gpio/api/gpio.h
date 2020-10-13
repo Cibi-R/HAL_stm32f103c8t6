@@ -1,5 +1,5 @@
-#ifndef __GPIO_DRIVER_H__
-#define __GPIO_DRIVER_H__
+#ifndef __GPIO_H__
+#define __GPIO_H__
 
 
 /******************************************************************************************************************************
@@ -126,4 +126,4 @@ unsigned char GPIO_Read_Data(Port_EN CurrentPort,Pin_EN CurrentPin);
 void GPIO_Toggle_Pin(Port_EN CurrentPort, Pin_EN CurrentPin);
 
 
-#endif //__GPIO_DRIVER_H__
+#endif //__GPIO_H__

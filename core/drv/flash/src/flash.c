@@ -1,5 +1,4 @@
-#include <includes.h>
-#include FLASH_H
+#include <platform.h>
 
 static HAL_Status Flash_Is_Busy(void)
 {

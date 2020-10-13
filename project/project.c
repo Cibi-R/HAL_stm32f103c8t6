@@ -1,9 +1,4 @@
-#include <includes.h>
-#include GPIO_H
-#include UART_APP_H
-#include FLASH_APP_H
-#include TEST1_H
-
+#include <app.h>
 
 void Delay(void)
 {
@@ -38,7 +33,7 @@ int main(void)
 	GPIO_Config_Pin(&PC13);
 #endif
 	
-	Run_FreeRTOS_Test1();
+    Run_FreeRTOS_Test1();
 	
 	while (1)
 	{

@@ -1,5 +1,4 @@
-#include <includes.h>
-#include TIMER_H
+#include <platform.h>
 
 void TIM2_IRQHandler(void)
 {

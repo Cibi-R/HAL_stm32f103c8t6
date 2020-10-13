@@ -1,6 +1,4 @@
-#include <includes.h>
-#include FLASH_H
-#include FLASH_APP_H
+#include <app.h>
 
 void delay(void)
 {

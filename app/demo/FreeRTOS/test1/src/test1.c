@@ -1,6 +1,6 @@
-#include <includes.h>
-#include GPIO_H
-#include TEST1_H
+#include <platform.h>
+#include <app.h>
+
 
 /******************************************************************************************************************************
  *												     Macro Definitions
@@ -87,8 +87,7 @@ void Task1_FreeRTOS(void* pvParameters)
     {
 		GPIO_Toggle_Pin(PC,P13);
 		
-		/*< Not exactly 1sec, 800ms - 900ms */
-		vTaskDelay(pdMS_TO_TICKS(1000));
+		vTaskDelay(pdMS_TO_TICKS(1));
 		
 		#if 0
 		/*< Not exactly 1ms, .8ms-.9ms */

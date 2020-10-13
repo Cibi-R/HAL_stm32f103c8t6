@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\HAL_stm32f103c8t6;..\includes;..\core\os\FreeRTOS\Source\include;..\core\os\FreeRTOS\Source\portable\RVDS\ARM_CM3</IncludePath>
+              <IncludePath>..\core\os\FreeRTOS\Source\include;..\core\os\FreeRTOS\Source\portable\RVDS\ARM_CM3;..\app\inc;..\core\drv\inc;..\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -393,6 +393,11 @@
           <GroupName>demo</GroupName>
           <Files>
             <File>
+              <FileName>test1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\app\demo\FreeRTOS\test1\src\test1.c</FilePath>
+            </File>
+            <File>
               <FileName>flash_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\app\demo\stm32_drv\flash\src\flash_app.c</FilePath>
@@ -406,11 +411,6 @@
               <FileName>uart_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\app\demo\stm32_drv\uart\src\uart_app.c</FilePath>
-            </File>
-            <File>
-              <FileName>test1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\app\demo\FreeRTOS\test1\src\test1.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -441,6 +441,11 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\core\drv\uart\src\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\core\drv\clk\src\clk.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,7 +1,4 @@
-#include <includes.h>
-#include <string.h>
-#include GPIO_H
-#include UART_H
+#include <app.h>
 
 
 void Test1(void)

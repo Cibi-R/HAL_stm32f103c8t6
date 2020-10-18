@@ -1,0 +1,39 @@
+
+/*************************************************************************************************************************************
+ * Brief about STM32F10x MCU clock 
+ * Primary Clock
+ * 1. HSI Oscillator, 8Mhz
+ * 2. HSE Oscillator, For external clock source (upto 50Mhz), OSC_IN has to drive clock, OSC_OUT should high impedence,
+ *                    For external ceramic/crytal resonator, 3 to 25Mhz
+ * 3. PLL Clock
+ * 
+ * Secondary Clock
+ * 1. LSI - 40Khz
+ * 2. LSE - 32.768khz
+ * 
+ * ************************************************************************************************************************************/
+
+
+Clock Configuration Sequence:
+-----------------------------
+
+1. Enable HSE
+2. Wait till HSE is ready
+3. Flash init
+4. Configure AHB prescalar
+5. Configure APB1 Prescalar
+6. Configure APB2 Prescalar
+7. Configure PLL PreDiv value
+8. Configure PLL multiplier value
+9. PLL on
+10. Wait till PLL is ready
+11. Select PLL as a system clock
+12. Wait till PLL is selected as a system clock
+
+Programming Guide:
+
+1. In order to add new frequencies to the code.
+2. Use qubeMx to know the PLL PreDiv, PLL Multiplier, HCLK div, PCLK1 div and PCLK2 div value
+3. Refer the System_Clk_Params_Init function and update the above mentioned values to SystemClock variable in 
+   System_Clk_Params_Init function.
+ 

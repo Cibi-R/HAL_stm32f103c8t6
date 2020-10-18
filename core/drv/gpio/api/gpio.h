@@ -32,7 +32,7 @@
 
 
 /******************************************************************************************************************************
- *												      Macro Definitions
+ *												        Macro Definitions
  ******************************************************************************************************************************/
 
 #define AFIOEN_CLOCK_ENABLE()  RCC->APB2ENR |= (1<<0)
@@ -112,23 +112,23 @@ typedef struct GPIO_Params_Tag
  ******************************************************************************************************************************/
 /**
  * @brief  : To Configure a pin mode
- * @param  : While holds the configuration info for that particular pin. Refer : GPIO_Params_Tag
- * @return : Configuration status, Boolean value
+ * @param  : It holds the configuration info for that particular pin. Refer : GPIO_Params_Tag
+ * @return : uint8_t (boolean), Configuration status 
  */
 
 extern uint8_t GPIO_SetConfig(GPIO_Params_T* Pin);
 
 /**
  * @brief  : To Configure group of pins
- * @param  : Param[0] : GPIO_Params_T, Array of pin configuration values, Refer : GPIO_Params_Tag, Param[1] : uint8_t, Number of elements
- * @return : Configuration status, Boolean value
+ * @param  : Param[0]-GPIO_Params_T, Array of pin configuration values, Refer : GPIO_Params_Tag. Param[1] : uint8_t, Number of elements
+ * @return : uint8_t (boolean), Configuration status
  */
 
 extern uint8_t GPIO_Init(GPIO_Params_T pinConfigArr[], uint8_t numElements);
 
 /**
  * @brief  : To read a pin's status
- * @param  : uint8_t[0] Port, uint8_t[1] Pin, Refer : STM32 Device Ports, STM32 Device Pins
+ * @param  : param[0]-uint8_t, Refer : STM32 Device Ports. param[1]-uint8_t, Refer : STM32 Device Pins macro
  * @return : uint8_t, Pin current status
  */
 
@@ -136,20 +136,20 @@ extern uint8_t GPIO_Read(uint8_t port, uint8_t pin);
 
 /**
  * @brief  : To set the output state of a particular pin
- * @param  : uint8_t[0] Port, uint8_t[1] Pin, Refer : STM32 Device Ports, STM32 Device Pins
+ * @param  : param[0]-uint8_t, Refer : STM32 Device Ports. param[1]-uint8_t, Refer : STM32 Device Pins macro. 
+			 param[3]-uint8_t state of that pin (Possible values are True/False, Enable/Disable, 0/1)
  * @return : void.
  */
 
 extern void GPIO_Write(uint8_t port, uint8_t pin, uint8_t out);
 
 /**
- * @brief  : To toggle the status of a particular pin
- * @param  : uint8_t[0] Port, uint8_t[1] Pin, Refer : STM32 Device Ports, STM32 Device Pins
+ * @brief  : To toggle the state of a particular pin
+ * @param  : param[0]-uint8_t, Refer : STM32 Device Ports. param[1]-uint8_t, Refer : STM32 Device Pins macro. 
  * @return : void
  */
 
 extern void GPIO_Toggle(uint8_t port, uint8_t pin);
-
 
 
 #endif //__GPIO_H__

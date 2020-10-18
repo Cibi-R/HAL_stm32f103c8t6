@@ -1,13 +1,5 @@
 #include <app.h>
 
-void Delay(void)
-{
-	uint16_t i,j;
-	for (i=0; i<10000; i++)
-	{
-		for (j=0; j<1000; j++);
-	}
-}
 
 int main(void)
 

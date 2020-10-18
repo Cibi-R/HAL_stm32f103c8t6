@@ -6,9 +6,9 @@
  ******************************************************************************************************************************/
 
 /**
- * @brief  : Stub function to get the base address of the gpio port
- * @param  : param[0] : uint8_t, port value. param[1] : GPIO_TypeDef, structure definition of GPIO Peripheral base addresses
- * @return : uint8_t
+ * @brief  : Stub function to get the base address of a gpio port
+ * @param  : param[0]-uint8_t, Refer : STM32 Device Ports. param[1]-GPIO_TypeDef, Refer device specific header file. 
+ * @return : uint8_t (Boolean)
  */
 
 uint8_t GPIO_GetBase_Add(uint8_t port, GPIO_TypeDef** regBase)
@@ -43,6 +43,10 @@ uint8_t GPIO_GetBase_Add(uint8_t port, GPIO_TypeDef** regBase)
     return retVal;
 }
 
+/**
+ * @brief  : To Configure a pin mode, Refer header file for more informatoin about the function and parameters values.
+ */
+
 uint8_t GPIO_SetConfig(GPIO_Params_T* pinConfig)
 {
     uint8_t retVal = False;
@@ -74,6 +78,10 @@ uint8_t GPIO_SetConfig(GPIO_Params_T* pinConfig)
     return retVal;
 }
 
+/**
+ * @brief  : To Configure group of pins, Refer header file for more informatoin about the function and parameters values.
+ */
+
 uint8_t GPIO_Init(GPIO_Params_T pinConfigArr[], uint8_t numElements)
 {
     uint8_t retVal = True;
@@ -93,6 +101,10 @@ uint8_t GPIO_Init(GPIO_Params_T pinConfigArr[], uint8_t numElements)
     return retVal;
 }
 
+/**
+ * @brief  : To read a pin's status, Refer header file for more informatoin about the function and parameters values.
+ */
+
 uint8_t GPIO_Read(uint8_t port, uint8_t pin)
 {
     uint8_t retPinState = False;
@@ -107,6 +119,9 @@ uint8_t GPIO_Read(uint8_t port, uint8_t pin)
     return retPinState;
 }
 
+/**
+ * @brief  : To set the output state of a particular pin, Refer header file for more informatoin about the function and parameters values.
+ */
 void GPIO_Write(uint8_t port, uint8_t pin, uint8_t out)
 {
     GPIO_TypeDef* gpioBase;
@@ -125,6 +140,9 @@ void GPIO_Write(uint8_t port, uint8_t pin, uint8_t out)
     }
 }
 
+/**
+ * @brief  : To toggle the state of a particular pin, Refer header file for more informatoin about the function and parameters values.
+ */
 void GPIO_Toggle(uint8_t port, uint8_t pin)
 {
     GPIO_TypeDef* gpioBase;

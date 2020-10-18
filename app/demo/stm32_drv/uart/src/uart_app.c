@@ -1,6 +1,6 @@
 #include <app.h>
 
-
+#if 0
 void Test1(void)
 {
 	UART_Tx_Bytes(UART1, UART_Rx_Bytes(UART1));
@@ -15,23 +15,25 @@ void Test3(void)
 {
 	UART_Tx_Bytes(UART3, UART_Rx_Bytes(UART3));
 }
+#endif
 
+#if 0
 static void UART_Config_Pin(void)
 {
     /* UART-1 Pin Configuration. No remapping programmed for UART1. */
-	GPIO_Config PA9, PA10;
+	GPIO_Params_T PA9, PA10;
 
 	/* UART-2 Pin Configuration. No remapping programmed for UART2. */
-	GPIO_Config PA2, PA3;
+	GPIO_Params_T PA2, PA3;
 
 	/* UART-3 Pin Configuration. No remapping programmed for UART3. */
-	GPIO_Config PB10, PB11;
+	GPIO_Params_T PB10, PB11;
 
 	/* UART-1 */
-	PA9.CurrentPort = PA;
-	PA9.CurrentPin = P9;
-	PA9.PinState = Output_Alternate_PushPull;
-	PA9.PinMode = Speed_50MHz_Output;
+	PA9.GPIO_Port = PA;
+	PA9.GPIO_Pin = P9;
+	PA9.GPIO_Mode = Output_Alternate_PushPull;
+	PA9.GPIO_Config_Func = Speed_50MHz_Output;
 
 	PA10.CurrentPort = PA;
 	PA10.CurrentPin = P10;
@@ -137,5 +139,6 @@ void UART_Init(void)
 	UART_Tx_Array(UART2,Array,sizeof(Array));
 	UART_Tx_Array(UART3,Array,sizeof(Array));
 }
+#endif
 
 

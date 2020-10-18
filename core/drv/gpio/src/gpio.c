@@ -1,106 +1,136 @@
 #include <platform.h>
 
-/******************************************************************************************************************************
- *												      Variable Definitions
- ******************************************************************************************************************************/
-
-/*
- *  @brief : uint32_t arrays to point the memory locations of GPIO Configuration registers. for each pin there will be
- *           4 bit (4 * 16 = 64 bits)
- */
-uint32_t volatile *const GPIO_Con_Low[4] = {&GPIOA->CRL, &GPIOB->CRL, &GPIOC->CRL, &GPIOD->CRL};
-uint32_t volatile *const GPIO_Con_High[4] = {&GPIOA->CRH, &GPIOB->CRH, &GPIOC->CRH, &GPIOD->CRH};
-
-
-/*
- *  @brief : uint32_t arrays to point the memory locations of GPIO Data registers. which can be used to read/write
- *           data to/from the GPIO pins.
- */
-uint32_t volatile *const GPIO_Input_Data[4] = {&GPIOA->IDR, &GPIOB->IDR, &GPIOC->IDR, &GPIOD->IDR};
-uint32_t volatile *const GPIO_Output_Data[4] = {&GPIOA->ODR, &GPIOB->ODR, &GPIOC->ODR, &GPIOD->ODR};
-
 
 /******************************************************************************************************************************
  *												      Function Definitions
  ******************************************************************************************************************************/
 
+/**
+ * @brief  : Stub function to get the base address of the gpio port
+ * @param  : param[0] : uint8_t, port value. param[1] : GPIO_TypeDef, structure definition of GPIO Peripheral base addresses
+ * @return : uint8_t
+ */
 
-void GPIO_Config_Pin(GPIO_Config *ConfigPort)
+uint8_t GPIO_GetBase_Add(uint8_t port, GPIO_TypeDef** regBase)
 {
-    uint32_t volatile *Control_Reg;
+    uint8_t retVal = True;
 
-    if (ConfigPort->CurrentPin < P8)
+    if (port == DEVICE_PORT_A)
     {
-        Control_Reg = GPIO_Con_Low[ConfigPort->CurrentPort];
+        *regBase = GPIOA;
+    }
+
+    else if (port == DEVICE_PORT_B)
+    {
+        *regBase = GPIOB;
+    }
+
+    else if (port == DEVICE_PORT_C)
+    {
+        *regBase = GPIOC;
+    }
+
+    else if (port == DEVICE_PORT_D)
+    {
+        *regBase = GPIOD;
     }
 
     else
     {
-        Control_Reg = GPIO_Con_High[ConfigPort->CurrentPort];
+        retVal  = False;
     }
 
-    *Control_Reg &= (~((uint32_t)0x3 << (4 * (ConfigPort->CurrentPin % 8)))); //Clear the bits to be set.
-    *Control_Reg |= (ConfigPort->PinMode << (4 * (ConfigPort->CurrentPin % 8)));
-
-    *Control_Reg &= (~((uint32_t)0x3 << ((4 * (ConfigPort->CurrentPin % 8)) + 2))); //Clear the bits to be set.
-    *Control_Reg |= (ConfigPort->PinState << ((4 * (ConfigPort->CurrentPin % 8)) + 2));
+    return retVal;
 }
 
-void GPIO_Write_Data(Port_EN CurrentPort, Pin_EN CurrentPin, PinState_EN State)
+uint8_t GPIO_SetConfig(GPIO_Params_T* pinConfig)
 {
-    if (State == High)
+    uint8_t retVal = False;
+
+    GPIO_TypeDef* gpioBase;
+
+    volatile uint32_t* gpioConfigReg;
+
+    if (GPIO_GetBase_Add(pinConfig->GPIO_Port, &gpioBase))
     {
-        *GPIO_Output_Data[CurrentPort] |= (1 << CurrentPin);
+        if (DEVICE_PORT_PIN_08 > pinConfig->GPIO_Pin)
+        {
+            gpioConfigReg = &gpioBase->CRL;
+        }
+        else
+        {
+            gpioConfigReg = &gpioBase->CRH;
+        }
+
+        *gpioConfigReg &= (~((uint32_t)0x3 << (4 * (pinConfig->GPIO_Pin % 8))));  /*< Clear bits */
+        *gpioConfigReg |= (((uint32_t)pinConfig->GPIO_Mode)  << (4 * (pinConfig->GPIO_Pin % 8)));
+
+        *gpioConfigReg &= (~((uint32_t)0x3 << ((4 * (pinConfig->GPIO_Pin % 8)) + 2)));  /*< Clear bits */
+        *gpioConfigReg |= (((uint32_t)pinConfig->GPIO_Config_Func) << ((4 * (pinConfig->GPIO_Pin % 8)) + 2));
+
+         retVal = True;
     }
 
-    else
+    return retVal;
+}
+
+uint8_t GPIO_Init(GPIO_Params_T pinConfigArr[], uint8_t numElements)
+{
+    uint8_t retVal = True;
+
+    for (uint8_t i = 0; i < numElements; i++)
     {
-        *GPIO_Output_Data[CurrentPort] &= (~(1 << CurrentPin));
+        if (!GPIO_SetConfig(&pinConfigArr[i]))
+        {
+            /*< GPIO_Port value can be used to tell the status of the gpio configuration to caller 
+                If the GPIO_Port value is read 0xFF after the initialization then that pin configuration is failed. */
+            pinConfigArr[i].GPIO_Port = DEVICE_PIN_CONFIG_FAILED;
+
+            retVal = False;
+        }
+    }
+
+    return retVal;
+}
+
+uint8_t GPIO_Read(uint8_t port, uint8_t pin)
+{
+    uint8_t retPinState = False;
+
+    GPIO_TypeDef* gpioBase;
+
+    if (GPIO_GetBase_Add(port, &gpioBase))
+    {
+        retPinState = ((uint8_t)((gpioBase->IDR >> pin) & 0x00000001));
+    }
+
+    return retPinState;
+}
+
+void GPIO_Write(uint8_t port, uint8_t pin, uint8_t out)
+{
+    GPIO_TypeDef* gpioBase;
+
+    if (GPIO_GetBase_Add(port, &gpioBase))
+    {
+        if (out == True)
+        {
+            gpioBase->ODR |= (1 << pin);
+        }
+
+        else
+        {
+            gpioBase->ODR &= (~(1 << pin));
+        }
     }
 }
 
-unsigned char GPIO_Read_Data(Port_EN CurrentPort, Pin_EN CurrentPin)
+void GPIO_Toggle(uint8_t port, uint8_t pin)
 {
-    unsigned char CurrentState = 0;
+    GPIO_TypeDef* gpioBase;
 
-    uint32_t volatile *Control_Reg;
-
-    if (CurrentPin < P8)
+    if (GPIO_GetBase_Add(port, &gpioBase))
     {
-        Control_Reg = GPIO_Con_Low[CurrentPort];
-    }
-
-    else
-    {
-        Control_Reg = GPIO_Con_High[CurrentPort];
-    }
-
-    /*We will read pin state only if it is configured in input mode. */
-    if (((*Control_Reg >> (4 * (CurrentPin % 8))) & 0x3) == 0)
-    {
-        CurrentState = (*GPIO_Input_Data[CurrentPort] >> CurrentPin) & 0x00000001;
-    }
-
-    return CurrentState;
-}
-
-void GPIO_Toggle_Pin(Port_EN CurrentPort, Pin_EN CurrentPin)
-{
-    uint32_t volatile *Control_Reg;
-
-    if (CurrentPin < P8)
-    {
-        Control_Reg = GPIO_Con_Low[CurrentPort];
-    }
-
-    else
-    {
-        Control_Reg = GPIO_Con_High[CurrentPort];
-    }
-
-    /*We will toggle pin state only if it is configured in output mode. */
-    if (((*Control_Reg >> (4 * (CurrentPin % 8))) & 0x3) != 0)
-    {
-        *GPIO_Output_Data[CurrentPort] ^= ((uint32_t)1 << CurrentPin);
+        gpioBase->ODR ^= ((uint32_t)1 << pin);
     }
 }

@@ -48,14 +48,14 @@ void delay_test1(void)
 
 void GPIO_Led_Init(void)
 {
-	GPIO_Config PC13;
+	GPIO_Params_T PC13;
 	
-	PC13.CurrentPin  = P13;
-	PC13.CurrentPort = PC;
-	PC13.PinMode     = Speed_50MHz_Output;
-	PC13.PinState    = Output_PushPull;
+	PC13.GPIO_Port           = DEVICE_PORT_C;
+	PC13.GPIO_Pin            = DEVICE_PORT_PIN_13;
+	PC13.GPIO_Mode           = DEVICE_PIN_MODE_OUT_50Mhz;
+	PC13.GPIO_Config_Func    = DEVICE_PIN_CONFIG_FUNC_OUT_PUSH_PULL;
 	
-	GPIO_Config_Pin(&PC13);
+	GPIO_SetConfig(&PC13);
 }
  
 void Run_FreeRTOS_Test1(void)
@@ -85,7 +85,7 @@ void Task1_FreeRTOS(void* pvParameters)
 
     while (taskRunning)
     {
-		GPIO_Toggle_Pin(PC,P13);
+		GPIO_Toggle(DEVICE_PORT_C,DEVICE_PORT_PIN_13);
 		
 		vTaskDelay(pdMS_TO_TICKS(1));
 		

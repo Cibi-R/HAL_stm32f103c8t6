@@ -1,9 +1,38 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
+/*****************************************************************************************************************************
+ *                                                    GPIO Info STM32F103C8T6
+ * ***************************************************************************************************************************
+ * 48 Pin Package
+ * --------------
+ * 
+ * PORTA + P0 - P15     +  GPIO                                   +     16
+ * PORTB + P0 - P15     +  GPIO                                   +     16 (PB2 will be mapped as a BOOT1 pin)
+ * PORTC + PC13 - PC15  +  GPIO                                   +     03
+ * PORTD + PD0 - PD1    +  RCC_OSC_IN, RCC_OSC_OUT Respectively   +     02
+ * 
+ * Pin numbering starts from 1
+ * 
+ * Pin 1  + VBAT                                                  +     01
+ * Pin 8  + VSSA                                                  +     01                                               
+ * Pin 9  + VDDA                                                  +     01
+ * Pin 23 + VSS                                                   +     01 
+ * Pin 24 + VDD                                                   +     01
+ * Pin 35 + VSS                                                   +     01
+ * Pin 36 + VDD                                                   +     01
+ * Pin 47 + VSS                                                   +     01
+ * Pin 48 + VDD                                                   +     01
+ * 
+ * NRST (Reset)                                                   +     01
+ * BOOT0                                                          +     01
+ *                                                            --------------------
+ *                                                                      48
+ *****************************************************************************************************************************/
+
 
 /******************************************************************************************************************************
- *												      Preprocessor Constants
+ *												      Macro Definitions
  ******************************************************************************************************************************/
 
 #define AFIOEN_CLOCK_ENABLE()  RCC->APB2ENR |= (1<<0)
@@ -18,112 +47,109 @@
 #define IsClockEnabled_PortC() (RCC->APB2ENR & (1<<4))
 #define IsClockEnabled_PortD() (RCC->APB2ENR & (1<<5))
 
+/*< STM32 Device Ports */
+
+#define DEVICE_PORT_A            ((uint8_t) 0X00)
+#define DEVICE_PORT_B            ((uint8_t) 0X01)
+#define DEVICE_PORT_C            ((uint8_t) 0X02)
+#define DEVICE_PORT_D            ((uint8_t) 0X03)  /*< If external oscillator is used, this pin conf should be locked*/
+
+/*< STM32 Device Pins */
+/*< Available pins count could vary for port c,d. please refer "GPIO Info STM32F103C8T6" section of header file */
+
+#define DEVICE_PORT_PIN_01       ((uint8_t) 0X01)
+#define DEVICE_PORT_PIN_02       ((uint8_t) 0X02)
+#define DEVICE_PORT_PIN_03       ((uint8_t) 0X03)
+#define DEVICE_PORT_PIN_04       ((uint8_t) 0X04)
+#define DEVICE_PORT_PIN_05       ((uint8_t) 0X05)
+#define DEVICE_PORT_PIN_06       ((uint8_t) 0X06)
+#define DEVICE_PORT_PIN_07       ((uint8_t) 0X07)
+#define DEVICE_PORT_PIN_08       ((uint8_t) 0X08)
+#define DEVICE_PORT_PIN_09       ((uint8_t) 0X09)
+#define DEVICE_PORT_PIN_10       ((uint8_t) 0X0A)
+#define DEVICE_PORT_PIN_11       ((uint8_t) 0X0B)
+#define DEVICE_PORT_PIN_12       ((uint8_t) 0X0C)
+#define DEVICE_PORT_PIN_13       ((uint8_t) 0X0D)
+#define DEVICE_PORT_PIN_14       ((uint8_t) 0X0E)
+#define DEVICE_PORT_PIN_15       ((uint8_t) 0X0F)
+
+/*< STM32 Device Pin Modes */
+
+#define DEVICE_PIN_MODE_IN           ((uint8_t) 0X00)
+#define DEVICE_PIN_MODE_OUT_10Mhz    ((uint8_t) 0X01)
+#define DEVICE_PIN_MODE_OUT_02Mhz    ((uint8_t) 0X02)
+#define DEVICE_PIN_MODE_OUT_50Mhz    ((uint8_t) 0X03)
+
+/*< STM32 Device Configuration States */
+
+#define DEVICE_PIN_CONFIG_FUNC_IN_ANALOG                   ((uint8_t) 0X00)
+#define DEVICE_PIN_CONFIG_FUNC_IN_FLOAT                    ((uint8_t) 0X01)
+#define DEVICE_PIN_CONFIG_FUNC_IN_PULL_UP_DOWN_EN          ((uint8_t) 0X02)
+#define DEVICE_PIN_CONFIG_FUNC_OUT_PUSH_PULL               ((uint8_t) 0X00) 
+#define DEVICE_PIN_CONFIG_FUNC_OUT_OPEN_DRAIN              ((uint8_t) 0X01)
+#define DEVICE_PIN_CONFIG_FUNC_ALT_OUT_PUSH_PULL           ((uint8_t) 0X02)
+#define DEVICE_PIN_CONFIG_FUNC_ALT_OUT_OPEN_DRAIN          ((uint8_t) 0X03)
+
+/*< STM32 Device Configuration Error */
+
+#define DEVICE_PIN_CONFIG_FAILED   ((uint8_t) 0XFF)
 
 /******************************************************************************************************************************
- *												      Typedef Declarations
+ *												           Typedefs
  ******************************************************************************************************************************/
 
-/* 
- * Enumeration to represent the PORTS
- */
-typedef enum _Port_EN
+typedef struct GPIO_Params_Tag
 {
-    PA,
-    PB,
-    PC,
-    PD
-}Port_EN;
-
-/* 
- * Enumeration to represent the PORTS pins
- */
-typedef enum _Pin_EN
-{
-    P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15
-}Pin_EN;
-
-/* 
- * Enumeration to represent pin state.
- */
-typedef enum _PinState_EN
-{
-    High,
-    Low
-}PinState_EN;
-
-/* 
- * Enumeration to represent the Mode of GPIO pins.
- */
-typedef enum _Config_PinMode_EN
-{
-    Input, //Input Mode.
-    Speed_10MHz_Output,
-    Speed_2MHz_Output,
-    Speed_50MHz_Output,
-}Config_PinMode_EN;
-
-/* 
- * Enumeration to represent various states of the pin.
- */
-typedef enum _Config_PinState_EN
-{
-    Input_Analog,
-    Input_Floating,
-    Input_Up_Down_Pull,
-    Reserverd,
-    Output_PushPull=0,
-    Output_OpenDrain,
-    Output_Alternate_PushPull,
-    Output_Alternate_Opendrain
-}Config_PinState_EN;
-
-/* 
- * Structure definition for holding configuration values during initialization of a pin.
- */
-typedef struct _GPIO_Config
-{
-    Port_EN CurrentPort;
-    Pin_EN CurrentPin;
-    Config_PinMode_EN PinMode;
-    Config_PinState_EN PinState;
-}GPIO_Config;
+    uint8_t GPIO_Port;          /*< Refer "STM32 Device Ports" macros for available ports */
+    uint8_t GPIO_Pin;           /*< Refer "STM32 Device Pins" macros for available pins */
+    uint8_t GPIO_Mode;          /*< Refer "STM32 Device Pin Modes" macros for available pin modes */
+    uint8_t GPIO_Config_Func;   /*< Refer "STM32 Device Configuration States" macros for available configuration states*/
+}GPIO_Params_T;
 
 
 /******************************************************************************************************************************
  *												      Fucntion Declarations
  ******************************************************************************************************************************/
-
-/*
+/**
  * @brief  : To Configure a pin mode
- * @para   : GPIO_Config (structure) which holds the value of port,pin,pin state and mode to be configured.
+ * @param  : While holds the configuration info for that particular pin. Refer : GPIO_Params_Tag
+ * @return : Configuration status, Boolean value
+ */
+
+extern uint8_t GPIO_SetConfig(GPIO_Params_T* Pin);
+
+/**
+ * @brief  : To Configure group of pins
+ * @param  : Param[0] : GPIO_Params_T, Array of pin configuration values, Refer : GPIO_Params_Tag, Param[1] : uint8_t, Number of elements
+ * @return : Configuration status, Boolean value
+ */
+
+extern uint8_t GPIO_Init(GPIO_Params_T pinConfigArr[], uint8_t numElements);
+
+/**
+ * @brief  : To read a pin's status
+ * @param  : uint8_t[0] Port, uint8_t[1] Pin, Refer : STM32 Device Ports, STM32 Device Pins
+ * @return : uint8_t, Pin current status
+ */
+
+extern uint8_t GPIO_Read(uint8_t port, uint8_t pin);
+
+/**
+ * @brief  : To set the output state of a particular pin
+ * @param  : uint8_t[0] Port, uint8_t[1] Pin, Refer : STM32 Device Ports, STM32 Device Pins
  * @return : void.
  */
 
-void GPIO_Config_Pin(GPIO_Config *ConfigPort);
+extern void GPIO_Write(uint8_t port, uint8_t pin, uint8_t out);
 
-/*
- * @brief  : To write data to gpio pin. This function will write a pin only if it is configured in output mode.
- * @para   : Port of current pin, current pin number, state to be written.
- * @return : void.
+/**
+ * @brief  : To toggle the status of a particular pin
+ * @param  : uint8_t[0] Port, uint8_t[1] Pin, Refer : STM32 Device Ports, STM32 Device Pins
+ * @return : void
  */
 
-void GPIO_Write_Data(Port_EN CurrentPort,Pin_EN CurrentPin,PinState_EN State);
+extern void GPIO_Toggle(uint8_t port, uint8_t pin);
 
-/*
- * @brief  : To read data from a pin. This function will read a pin only if it is configured in input mode.
- * @para   : Port of current pin, current pin number
- * @return : State of the pin (0,1)
- */
-
-unsigned char GPIO_Read_Data(Port_EN CurrentPort,Pin_EN CurrentPin);
-
-/*
- * @brief  : To toggle a pin in a port, This function toggles a pin only if it configured in output mode.
- * @para   : Port of Current pin, current pin number.
- * @return : void.
- */
-
-void GPIO_Toggle_Pin(Port_EN CurrentPort, Pin_EN CurrentPin);
 
 
 #endif //__GPIO_H__

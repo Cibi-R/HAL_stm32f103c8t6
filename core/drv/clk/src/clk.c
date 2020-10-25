@@ -105,7 +105,7 @@ void System_Clk_Params_Init(uint64_t SystemClock, ClockParams_T *ClockParams)
 
 void System_Flash_Init(void)
 {
-    /* Enable Prefetch Buffer */
+    /* Enable Prefetch Buffer, should be enabled when the system clock is lower than 24Mhz */
     FLASH->ACR |= FLASH_ACR_PRFTBE;
 
     /* Flash 2 wait state */

@@ -1,5 +1,13 @@
 #include <app.h>
 
+void HardFault_Handler(void)
+{
+	volatile uint8_t i = 0;
+	while (i)
+	{
+		
+	}
+}
 
 int main(void)
 
@@ -25,6 +33,10 @@ int main(void)
 	GPIO_Config_Pin(&PC13);
 #endif
 	
+#if 0
+	Flash_App_Test();
+#endif
+
     Run_FreeRTOS_Test1();
 	
 	while (1)

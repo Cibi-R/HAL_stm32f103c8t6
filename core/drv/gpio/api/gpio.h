@@ -98,12 +98,18 @@
  *												           Typedefs
  ******************************************************************************************************************************/
 
+typedef void (*GPIO_ExtInt_Handler)(void);
+
+
 typedef struct GPIO_Params_Tag
 {
     uint8_t GPIO_Port;          /*< Refer "STM32 Device Ports" macros for available ports */
     uint8_t GPIO_Pin;           /*< Refer "STM32 Device Pins" macros for available pins */
     uint8_t GPIO_Mode;          /*< Refer "STM32 Device Pin Modes" macros for available pin modes */
     uint8_t GPIO_Config_Func;   /*< Refer "STM32 Device Configuration States" macros for available configuration states*/
+    uint8_t GPIO_Int;           /*< Boolean value, If this member is set to 1 (Enable/True) then GPIO_Mode, GPIO_Config_Func 
+                                    values will be discarded and will be configured for ext interrupt*/
+    GPIO_ExtInt_Handler  GPIO_Callback;  /*< Callbakc function for GPIO external interrupt */
 }GPIO_Params_T;
 
 
@@ -151,5 +157,20 @@ extern void GPIO_Write(uint8_t port, uint8_t pin, uint8_t out);
 
 extern void GPIO_Toggle(uint8_t port, uint8_t pin);
 
+/**
+ * @brief  : To enable the external interrupt of a pin
+ * @param  : param[0]-GPIO_Params_T.Pin configuration values, Refer : GPIO_Params_Tag.
+ * @return : uint8_t (Boolean), Configuration status
+ */
+
+extern uint8_t GPIO_Enable_Int(GPIO_Params_T pin);
+
+/**
+ * @brief  : To disable the external interrupt of a pin
+ * @param  : param[0]-GPIO_Params_T.Pin configuration values, Refer : GPIO_Params_Tag. 
+ * @return : uint8_t (Boolean), Configuration status
+ */
+
+extern uint8_t GPIO_Disable_Int(GPIO_Params_T pin);
 
 #endif //__GPIO_H__

@@ -152,3 +152,21 @@ void GPIO_Toggle(uint8_t port, uint8_t pin)
         gpioBase->ODR ^= ((uint32_t)1 << pin);
     }
 }
+
+/**
+ * @brief  : To Enable interrrupt of a pin, Refer header file for more informatoin about the function and parameters values.
+ */
+uint8_t GPIO_Enable_Int(GPIO_Params_T pin)
+{
+    /*< To use external interrupt, the port must be configured in input mode. */
+	return 0;
+}
+
+
+/**
+ * @brief  : To disable interrupt of a pin, Refer header file for more informatoin about the function and parameters values.
+ */
+uint8_t GPIO_Disable_Int(GPIO_Params_T pin)
+{
+	return 0;
+}

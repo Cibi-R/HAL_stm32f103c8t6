@@ -24,9 +24,25 @@ void Flash_App_Test(void)
 	}
 	#endif
 	
+	#if 0
 	uint32_t add = 0X8002000;
 	
 	uint8_t value[5] = {0xAA,0XBB, 0XCC, 0XDD, 0XEE};
 	
 	Flash_Write_Stream(add, value, 5);
+	#endif
+	
+	#if 0
+	uint32_t add = 0X08002000;
+	
+	uint32_t value = 0XDDCCBBAA;
+	
+	Flash_Write_Bit32(add, &value);
+	
+	Flash_Erase_Page(8);
+	#endif
+	
+	#if 1
+	Flash_Erase_Mass();
+	#endif
 }

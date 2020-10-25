@@ -33,7 +33,7 @@ int main(void)
 	GPIO_Config_Pin(&PC13);
 #endif
 	
-#if 0
+#if 1
 	Flash_App_Test();
 #endif
 

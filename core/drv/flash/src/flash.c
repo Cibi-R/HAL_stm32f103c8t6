@@ -1,5 +1,10 @@
 #include <platform.h>
 
+/**
+  * @brief : This function will be used to wait for ongoing flash operaton by polling BSY flag in the status register,
+  *          and will return the status of the completed flash programming operation 
+  */
+
 static uint8_t Flash_Is_Write_Completed(void)
 {
 	uint8_t retVal = FLASH_OK;
@@ -22,12 +27,14 @@ static uint8_t Flash_Is_Write_Completed(void)
 		/*< Check for write protection error */
 		if (FLASH->SR & FLASH_SR_WRPRTERR)
 		{
+			FLASH->SR |= FLASH_SR_WRPRTERR;
 			retVal |= FLASH_WRITE_PROT_ERROR;
 		}
 
 		/*< Check for programming error */
 		if (FLASH->SR & FLASH_SR_PGERR)
-		{											
+		{
+			FLASH->SR |= FLASH_SR_PGERR;
 			retVal |= FLASH_PROG_ERROR;
 		}
 	}
@@ -36,10 +43,6 @@ static uint8_t Flash_Is_Write_Completed(void)
 		retVal |= FLASH_TIMEOUT_ERROR;
 	}
 
-	
-	/*< Clear the Programming bit in control register to enable the flash programming. */
-	FLASH->CR &= (~(FLASH_CR_PG));
-
 	return retVal;
 }
 
@@ -47,6 +50,10 @@ static uint8_t Flash_Is_Locked(void)
 {
 	return ((FLASH->CR & FLASH_CR_LOCK) >> 7U);
 }
+
+/**
+  * @brief : This function will unlock the FPEC (Flash programming and Erase controller) and Flash control register.
+  */
 
 static uint8_t Flash_Unlock(void)
 {
@@ -64,6 +71,10 @@ static uint8_t Flash_Unlock(void)
 	return ((timeout) ? FLASH_OK : FLASH_UNLOCK_ERROR);
 }
 
+/**
+  * @brief : This will lock the FPEC (Flash programming and erase controller) and  Flash control register by setting Lock bit in CR Reg 
+  */
+
 static uint8_t Flash_Lock(void)
 {
 	uint16_t timeout = FLASH_TIMEOUT;
@@ -79,17 +90,33 @@ static uint8_t Flash_Lock(void)
 	return ((timeout) ? FLASH_OK : FLASH_LOCK_ERROR);
 }
 
+/**
+  * @brief : Private fucntion to write 16 bits of data to the flash memory, This fucntion will be used by all other public write functions.
+  */
+
 static uint8_t Flash_Write(uint32_t add, uint16_t bits_16)
 {
+	uint8_t retVal = FLASH_OK;
+
 	/*< Set the Programming bit in control register to enable the flash programming. */
 	FLASH->CR |= FLASH_CR_PG;
 
 	/*< Write the desired value into the memory location. */
 	*(volatile uint16_t *)add = bits_16;
 
-	/*< Return the status of the write operation */
-	return Flash_Is_Write_Completed();
+	retVal = Flash_Is_Write_Completed();
+
+	/*< Clear the Programming bit in control register to enable the flash programming. */
+	FLASH->CR &= (~(FLASH_CR_PG));
+
+	/*< Check the written value and return the status */
+	return (FLASH_OK == retVal) ? ((bits_16 == (*(volatile uint16_t *)add)) ? FLASH_OK : FLASH_WRITE_ERROR) : FLASH_WRITE_ERROR;
 }
+
+/**
+  * @brief : This function will write 1 byte of data to the flash memory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
 
 uint8_t Flash_Write_Bit8(uint32_t startAdd, uint8_t *data)
 {
@@ -117,6 +144,11 @@ uint8_t Flash_Write_Bit8(uint32_t startAdd, uint8_t *data)
 	return retVal;
 }
 
+/**
+  * @brief : This function will write 2 bytes of data to the flash memory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
+
 uint8_t Flash_Write_Bit16(uint32_t startAdd, uint16_t *data)
 {
 	uint8_t retVal = FLASH_OK;
@@ -135,6 +167,11 @@ uint8_t Flash_Write_Bit16(uint32_t startAdd, uint16_t *data)
 
 	return retVal;
 }
+
+/**
+  * @brief : This function will write 4 bytes of data to flash memory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
 
 uint8_t Flash_Write_Bit32(uint32_t startAdd, uint32_t *data)
 {
@@ -158,6 +195,11 @@ uint8_t Flash_Write_Bit32(uint32_t startAdd, uint32_t *data)
 
 	return retVal;
 }
+
+/**
+  * @brief : This function will write the stream of bytes to the flash memory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
 
 uint8_t Flash_Write_Stream(uint32_t startAdd, uint8_t *data, uint8_t length)
 {
@@ -199,12 +241,22 @@ uint8_t Flash_Write_Stream(uint32_t startAdd, uint8_t *data, uint8_t length)
 	return 0;
 }
 
+/**
+  * @brief : This function will read 8 bytes from the flash memory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
+
 uint8_t Flash_Read_Bit8(uint32_t startAdd, uint8_t* data)
 {
 	*data = (*((uint8_t*)(startAdd)));
 
 	return FLASH_OK;
 }
+
+/**
+  * @brief : This function will read 2 bytes from the flash memory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
 
 uint8_t Flash_Read_Bit16(uint32_t startAdd, uint16_t* data)
 {
@@ -213,12 +265,22 @@ uint8_t Flash_Read_Bit16(uint32_t startAdd, uint16_t* data)
 	return FLASH_OK;
 }
 
+/**
+  * @brief : This function will read 4 bytes from the flash memory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
+
 uint8_t Flash_Read_Bit32(uint32_t startAdd, uint32_t* data)
 {
 	*data =  (*((uint32_t*)(startAdd)));
 
 	return FLASH_OK;
 }
+
+/**
+  * @brief : This fucntion will read a stream of bytes from the flash memory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
 
 uint8_t Flash_Read_Stream(uint32_t startAdd, uint8_t* stream, uint8_t length)
 {
@@ -232,17 +294,99 @@ uint8_t Flash_Read_Stream(uint32_t startAdd, uint8_t* stream, uint8_t length)
 	return FLASH_OK;
 }
 
+/**
+  * @brief : This function will erase an individual page in the flash memmory. Refer header file for more informatoin about 
+  *          the function and parameters values.
+  */
+
 uint8_t Flash_Erase_Page(uint8_t page)
 {
-	return 0;
+	uint32_t startAdd;
+	uint8_t retVal = FLASH_OK;
+	
+	if (Flash_Is_Locked())
+	{
+		retVal = Flash_Unlock();
+	}
+
+	if (FLASH_OK == retVal)
+	{
+		if (page < FLASH_PAGE_COUNT)
+		{
+			/*< This function is used for checking the busy flag so,it can be used for erase operations too */
+			if (FLASH_OK == Flash_Is_Write_Completed())
+			{
+				FLASH->CR |= FLASH_CR_PER;
+
+				startAdd = (FLASH_BASE_ADDRESS + (FLASH_PAGE_SIZE * (uint32_t)page));
+
+				FLASH->AR = startAdd;
+
+				FLASH->CR |= FLASH_CR_STRT;
+
+				retVal = Flash_Is_Write_Completed();
+
+				if (FLASH_OK == retVal)
+				{
+					for (uint16_t i = 0; i < 0X400; i += 4)
+					{
+						if ((*(uint32_t *)(startAdd + i)) != (uint32_t)0XFFFFFFFF)
+						{
+							retVal = FLASH_ERASE_ERROR;
+							break;
+						}
+					}
+				}
+
+				/*< Page Erase(PER) and Start(STRT) bits are cleared automatically when the busy is reset, just confirming:) */
+				FLASH->CR &= (~FLASH_CR_PER);
+				FLASH->CR &= (~FLASH_CR_STRT);
+			}
+		}
+	}
+
+	return retVal;
 }
+
+/**
+  * @brief : This fucntion will erase the parititons, To be implemented.
+  */
 
 uint8_t Flash_Erase_Parition(uint8_t partition)
 {
 	return 0;
 }
 
-uint8_t Flash_Erase_Complete(void)
-{
-	return 0;
+/**
+  * @brief : This fucntion will perform the mass erase, erase all 128 pages of flash
+  */
+
+uint8_t Flash_Erase_Mass(void)
+{	
+	#if 0
+	uint8_t retVal = FLASH_OK;
+	
+	if (Flash_Is_Locked())
+	{
+		retVal = Flash_Unlock();
+	}
+
+	if (FLASH_OK == retVal)
+	{
+		retVal = Flash_Is_Write_Completed();
+
+		if (FLASH_OK == retVal)
+		{
+			FLASH->CR  |= FLASH_CR_MER;
+
+			retVal = 0XFF;
+			while (retVal) {retVal--;}
+
+			FLASH->CR |= FLASH_CR_STRT;
+		}
+	}
+	#endif
+	
+	/*< Code would not reach this point, if it reaches flash mass erase would have been failed */
+	return FLASH_ERASE_ERROR;
 }

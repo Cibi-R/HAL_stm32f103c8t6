@@ -56,6 +56,7 @@
 #define FLASH_LOCK_ERROR             ((uint8_t) 0X10)
 #define FLASH_WRITE_ERROR            ((uint8_t) 0X20)
 #define FLASH_READ_ERROR             ((uint8_t) 0X40)
+#define FLASH_ERASE_ERROR            ((uint8_t) 0X80)
 
 /*< Flash Read/Write status */
 #define FLASH_OK                     ((uint8_t) 0X00)
@@ -68,6 +69,11 @@
 /*< Flash unlock keys */
 #define FLASH_UNLOCK_KEY1 0x45670123UL
 #define FLASH_UNLOCK_KEY2 0xCDEF89ABUL
+
+/*< Flash start address */
+#define FLASH_BASE_ADDRESS           ((uint32_t)0X08000000)
+#define FLASH_PAGE_SIZE              ((uint32_t)0X400)
+#define FLASH_PAGE_COUNT             ((uint8_t)0XFF)
 
 
 /******************************************************************************************************************************
@@ -141,7 +147,7 @@ uint8_t Flash_Read_Bit32(uint32_t startAdd, uint32_t* data);
 uint8_t Flash_Read_Stream(uint32_t startAdd, uint8_t* stream, uint8_t length);
 
 /**
- * @brief : This function will erase the page - 128 pages, TO BE IMPLEMENTED
+ * @brief : This function will erase the page - 128 pages
  * @param : uint8_t - Page to be erased
  * @return: status of the write operation, Refer Flash Error and status macros
  */
@@ -155,11 +161,11 @@ uint8_t Flash_Erase_Page(uint8_t page);
 uint8_t Flash_Erase_Parition(uint8_t partition);
 
 /**
- * @brief : This function will perform the complete erase, TO BE IMPLEMENTED
+ * @brief : This function will perform the complete erase
  * @param : void
  * @return: status of the write operation, Refer Flash Error and status macros
  */
-uint8_t Flash_Erase_All(void);
+uint8_t Flash_Erase_Mass(void);
 
 
 #endif //__FLASH_H__

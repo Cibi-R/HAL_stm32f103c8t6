@@ -1,13 +1,5 @@
 #include <app.h>
 
-void HardFault_Handler(void)
-{
-	volatile uint8_t i = 0;
-	while (i)
-	{
-		
-	}
-}
 
 int main(void)
 
@@ -18,6 +10,10 @@ int main(void)
     PORTD_CLOCK_ENABLE();
 
     AFIOEN_CLOCK_ENABLE();
+
+	SCB->CCR |= (1 << 3);
+	
+	Sys_Init();
 
 #if 0
     UART_Init();
@@ -33,22 +29,13 @@ int main(void)
 	GPIO_Config_Pin(&PC13);
 #endif
 	
-#if 1
+#if 0
 	Flash_App_Test();
 #endif
 
-    Run_FreeRTOS_Test1();
+    FreeRTOS_TestApp1_Run();
 	
-	while (1)
-	{
-#if 0
-		GPIO_Write_Data(PC, P13, High);
-		Delay();
-		
-		GPIO_Write_Data(PC, P13, Low);
-		Delay();
-#endif
-	}
+	while (1);
 }
 
 

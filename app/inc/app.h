@@ -3,12 +3,15 @@
 
 #include <platform.h>
 
+/*< System init header files */
+#include "../demo/sys/api/sys.h"
+
 /*< Driver application demos header files. */
 #include "../demo/stm32_drv/flash/api/flash_app.h"
 #include "../demo/stm32_drv/timer/api/timer_app.h"
 #include "../demo/stm32_drv/uart/api/uart_app.h"
 
 /*< FreeRTOS application demo header files.  */
-#include "../demo/FreeRTOS/test1/api/test1.h"
+#include "../demo/FreeRTOS/task/api/task.h"
 
 #endif //__APP_H__

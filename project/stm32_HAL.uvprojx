@@ -82,7 +82,7 @@
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>"srec_cat stm32_HAL.hex -Intel -o stm2_HAL.hex.bin -Binary"</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -393,11 +393,6 @@
           <GroupName>demo</GroupName>
           <Files>
             <File>
-              <FileName>test1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\app\demo\FreeRTOS\test1\src\test1.c</FilePath>
-            </File>
-            <File>
               <FileName>flash_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\app\demo\stm32_drv\flash\src\flash_app.c</FilePath>
@@ -411,6 +406,16 @@
               <FileName>uart_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\app\demo\stm32_drv\uart\src\uart_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\app\demo\sys\src\sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\app\demo\FreeRTOS\task\src\task.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -491,6 +496,16 @@
               <FileName>port.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\core\os\FreeRTOS\Source\portable\RVDS\ARM_CM3\port.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>coreM3</GroupName>
+          <Files>
+            <File>
+              <FileName>coreM3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\core\coreM3\src\coreM3.c</FilePath>
             </File>
           </Files>
         </Group>

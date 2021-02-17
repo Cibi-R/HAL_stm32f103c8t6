@@ -32,8 +32,8 @@ void Flash_App_Test(void)
 	Flash_Write_Stream(add, value, 5);
 	#endif
 	
-	#if 0
-	uint32_t add = 0X08002000;
+	#if 1
+	uint32_t add = 0X08002001;
 	
 	uint32_t value = 0XDDCCBBAA;
 	
@@ -42,7 +42,7 @@ void Flash_App_Test(void)
 	Flash_Erase_Page(8);
 	#endif
 	
-	#if 1
+	#if 0
 	Flash_Erase_Mass();
 	#endif
 }

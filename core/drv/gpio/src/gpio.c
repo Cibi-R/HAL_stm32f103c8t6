@@ -44,7 +44,7 @@ uint8_t GPIO_GetBase_Add(uint8_t port, GPIO_TypeDef** regBase)
 }
 
 /**
- * @brief  : To Configure a pin mode, Refer header file for more informatoin about the function and parameters values.
+ * @brief  : To Configure a pin mode, Refer gpio.h for more informatoin
  */
 
 uint8_t GPIO_SetConfig(GPIO_Params_T* pinConfig)
@@ -79,7 +79,7 @@ uint8_t GPIO_SetConfig(GPIO_Params_T* pinConfig)
 }
 
 /**
- * @brief  : To Configure group of pins, Refer header file for more informatoin about the function and parameters values.
+ * @brief  : To Configure group of pins, Refer gpio.h for more informatoin.
  */
 
 uint8_t GPIO_Init(GPIO_Params_T pinConfigArr[], uint8_t numElements)
@@ -102,7 +102,7 @@ uint8_t GPIO_Init(GPIO_Params_T pinConfigArr[], uint8_t numElements)
 }
 
 /**
- * @brief  : To read a pin's status, Refer header file for more informatoin about the function and parameters values.
+ * @brief  : To read a pin's status, Refer gpio.h for more informatoin.
  */
 
 uint8_t GPIO_Read(uint8_t port, uint8_t pin)
@@ -120,7 +120,7 @@ uint8_t GPIO_Read(uint8_t port, uint8_t pin)
 }
 
 /**
- * @brief  : To set the output state of a particular pin, Refer header file for more informatoin about the function and parameters values.
+ * @brief  : To set the output state of a particular pin, Refer gpio.h for more informatoin.
  */
 void GPIO_Write(uint8_t port, uint8_t pin, uint8_t out)
 {
@@ -141,7 +141,7 @@ void GPIO_Write(uint8_t port, uint8_t pin, uint8_t out)
 }
 
 /**
- * @brief  : To toggle the state of a particular pin, Refer header file for more informatoin about the function and parameters values.
+ * @brief  : To toggle the state of a particular pin, Refer gpio.h for more information.
  */
 void GPIO_Toggle(uint8_t port, uint8_t pin)
 {
@@ -154,7 +154,7 @@ void GPIO_Toggle(uint8_t port, uint8_t pin)
 }
 
 /**
- * @brief  : To Enable interrrupt of a pin, Refer header file for more informatoin about the function and parameters values.
+ * @brief  : To Enable interrrupt of a pin, Refer gpio.h for more information.
  */
 uint8_t GPIO_Enable_Int(GPIO_Params_T pin)
 {
@@ -164,7 +164,7 @@ uint8_t GPIO_Enable_Int(GPIO_Params_T pin)
 
 
 /**
- * @brief  : To disable interrupt of a pin, Refer header file for more informatoin about the function and parameters values.
+ * @brief  : To disable interrupt of a pin, Refer gpio.h for more informatoin.
  */
 uint8_t GPIO_Disable_Int(GPIO_Params_T pin)
 {

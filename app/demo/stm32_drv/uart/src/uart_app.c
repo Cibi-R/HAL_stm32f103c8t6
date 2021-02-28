@@ -1,144 +1,56 @@
 #include <app.h>
 
-#if 0
-void Test1(void)
-{
-	UART_Tx_Bytes(UART1, UART_Rx_Bytes(UART1));
-}
-
-void Test2(void)
-{
-	UART_Tx_Bytes(UART2, UART_Rx_Bytes(UART2));
-}
-
-void Test3(void)
-{
-	UART_Tx_Bytes(UART3, UART_Rx_Bytes(UART3));
-}
-#endif
-
-#if 0
-static void UART_Config_Pin(void)
+void UART1_Test_App(void)
 {
     /* UART-1 Pin Configuration. No remapping programmed for UART1. */
-	GPIO_Params_T PA9, PA10;
-
-	/* UART-2 Pin Configuration. No remapping programmed for UART2. */
-	GPIO_Params_T PA2, PA3;
-
-	/* UART-3 Pin Configuration. No remapping programmed for UART3. */
-	GPIO_Params_T PB10, PB11;
-
+	GPIO_Params_T PA9;  // (Tx) 
+	GPIO_Params_T PA10; // (Rx)
+	
+	/*< Variable used for UART initialization and handling */
+	UART_Params_T UART_Params;
+	UART_Handle_T *UART_Handle;
+	
+	char UART_String[] = "UART String\n\r";
+	
 	/* UART-1 */
-	PA9.GPIO_Port = PA;
-	PA9.GPIO_Pin = P9;
-	PA9.GPIO_Mode = Output_Alternate_PushPull;
-	PA9.GPIO_Config_Func = Speed_50MHz_Output;
+	PA9.GPIO_Port = DEVICE_PORT_A;
+	PA9.GPIO_Pin  = DEVICE_PORT_PIN_09;
+	PA9.GPIO_Mode = DEVICE_PIN_MODE_OUT_50Mhz;
+	PA9.GPIO_Config_Func = DEVICE_PIN_CONFIG_FUNC_ALT_OUT_PUSH_PULL;
+	PA9.GPIO_Callback = NULL;
 
-	PA10.CurrentPort = PA;
-	PA10.CurrentPin = P10;
-	PA10.PinState = Input_Floating;
-	PA10.PinMode = Input;
-
-	/* UART-2 */
-	PA2.CurrentPort = PA;
-	PA2.CurrentPin = P2;
-	PA2.PinState = Output_Alternate_PushPull;
-	PA2.PinMode = Speed_50MHz_Output;
-
-	PA3.CurrentPort = PA;
-	PA3.CurrentPin = P3;
-	PA3.PinState = Input_Floating;
-	PA3.PinMode = Input;
-
-	/* UART-3 */
-	PB10.CurrentPort = PB;
-	PB10.CurrentPin = P10;
-	PB10.PinState = Output_Alternate_PushPull;
-	PB10.PinMode = Speed_50MHz_Output;
-
-	PB11.CurrentPort = PB;
-	PB11.CurrentPin = P11;
-	PB11.PinState = Input_Floating;
-	PB11.PinMode = Input;
-
-	/* UART-1 */
-	GPIO_Config_Pin(&PA9);
-	GPIO_Config_Pin(&PA10);
-
-	/* UART-2 */
-	GPIO_Config_Pin(&PA2);
-	GPIO_Config_Pin(&PA3);
-
-	/* UART-3 */
-	GPIO_Config_Pin(&PB10);
-	GPIO_Config_Pin(&PB11);
+	PA10.GPIO_Port = DEVICE_PORT_A;
+	PA10.GPIO_Pin  = DEVICE_PORT_PIN_10;
+	PA10.GPIO_Mode = DEVICE_PIN_MODE_IN;
+	PA10.GPIO_Config_Func = DEVICE_PIN_CONFIG_FUNC_IN_FLOAT;
+	PA10.GPIO_Callback = NULL;
+	
+	/*< UART_Params handle will be initialized to a default values */
+	UART_Params_Init(&UART_Params);
+	
+	/*< Initialize the UART_params to a desired values */
+	UART_Params.uart_Channel       = DEVICE_UART_CHANNEL_1;
+	UART_Params.uart_OperatingMode = DEVICE_UART_MODE_TX;
+	UART_Params.uart_WordLength    = DEVICE_UART_WORD_LEN_8;
+	UART_Params.uart_StopBits      = DEVICE_UART_STOP_BIT_1;
+	UART_Params.uart_Parity        = DEVICE_UART_PARITY_NONE;
+	UART_Params.uart_Baudrate      = DEVICE_UART_BR_9600;
+	UART_Params.uart_TxCallBack    = NULL;
+	UART_Params.uart_RxCallBack    = NULL;
+	
+	// UART_Open(UART_Handle);
+	
+	UART1_CLOCK_ENABLE();
+	
+	GPIO_SetConfig(&PA9);
+	GPIO_SetConfig(&PA10);
+	
+	/*< Initialize UART with the configured values */
+	UART_Handle = UART_SetConfig(&UART_Params);
+	
+	UART_TxString(UART_Handle, (uint8_t*)&UART_String[0], sizeof(UART_String));
+	
+	// UART_Close(UART_Handle);
 }
-
-void UART_Init(void)
-{
-	/* Test Strings */
-	uint8_t String[] = "String Function Working!\n\r";
-	uint8_t Array[] = "Array Function Working!\n\r";
-	
-	/* Instantiate variable to configure UART peripherals. */
-    UART_Config_ST uart1;
-	UART_Config_ST uart2;
-	UART_Config_ST uart3;
-
-    uart1.Instance = UART1;
-    uart1.WordLength = UART_8Bit;
-    uart1.ParitySelection = UART_No_Parity;
-    uart1.StopBits = UART_1_StopBit;
-    uart1.BaudRate = UART_Baud_9600;
-    uart1.OperatingMode = UART_Transceiver;
-	uart1.UART_Rx_ISR = Test1;
-	
-
-	uart2.Instance = UART2;
-    uart2.WordLength = UART_8Bit;
-    uart2.ParitySelection = UART_No_Parity;
-    uart2.StopBits = UART_1_StopBit;
-    uart2.BaudRate = UART_Baud_9600;
-    uart2.OperatingMode = UART_Transceiver;
-	uart2.UART_Rx_ISR = Test2;
-
-	uart3.Instance = UART3;
-    uart3.WordLength = UART_8Bit;
-    uart3.ParitySelection = UART_No_Parity;
-    uart3.StopBits = UART_1_StopBit;
-    uart3.BaudRate = UART_Baud_9600;
-    uart3.OperatingMode = UART_Transceiver;
-	uart3.UART_Rx_ISR = Test3;
-
-	/*< Enable clock of the UART. */
-    ENABLE_UART1_CLOCK();
-	ENABLE_UART2_CLOCK();
-	ENABLE_UART3_CLOCK();
-	
-	/*< Enable the UART interrupt. */
-	NVIC_EnableIRQ(USART1_IRQn);
-	NVIC_EnableIRQ(USART2_IRQn);
-	NVIC_EnableIRQ(USART3_IRQn);
-
-	/*< Configure the UART pins. */
-    UART_Config_Pin();
-
-	/*< Configure UART. */
-    UART_Config_Init(&uart1);
-	UART_Config_Init(&uart2);
-	UART_Config_Init(&uart3);
-	
-	/*< Send String. */
-	UART_Tx_String(UART1,String);
-	UART_Tx_String(UART2,String);
-	UART_Tx_String(UART3,String);
-
-	/*< Send Array. */
-	UART_Tx_Array(UART1,Array,sizeof(Array));
-	UART_Tx_Array(UART2,Array,sizeof(Array));
-	UART_Tx_Array(UART3,Array,sizeof(Array));
-}
-#endif
 
 

@@ -33,8 +33,11 @@ int main(void)
 	Flash_App_Test();
 #endif
 
+	UART1_Test_App();
+
+#if 1
     FreeRTOS_TestApp1_Run();
-	
+#endif
 	while (1);
 }
 

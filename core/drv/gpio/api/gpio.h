@@ -7,9 +7,9 @@
  * 48 Pin Package
  * --------------
  * 
- * PORTA + P0 - P15     +  GPIO                                   +     16
- * PORTB + P0 - P15     +  GPIO                                   +     16 (PB2 will be mapped as a BOOT1 pin)
- * PORTC + PC13 - PC15  +  GPIO                                   +     03
+ * PORTA + P0 - P15                                               +     16
+ * PORTB + P0 - P15                                               +     16 (PB2 will be mapped as a BOOT1 pin)
+ * PORTC + PC13 - PC15                                            +     03
  * PORTD + PD0 - PD1    +  RCC_OSC_IN, RCC_OSC_OUT Respectively   +     02
  * 
  * Pin numbering starts from 1
@@ -35,26 +35,51 @@
  *												        Macro Definitions
  ******************************************************************************************************************************/
 
+/**
+ * @brief : Enable clock for alternate IO function
+ **/
+
 #define AFIOEN_CLOCK_ENABLE()  RCC->APB2ENR |= (1<<0)
 
-#define PORTA_CLOCK_ENABLE()   RCC->APB2ENR |= (1<<2)
-#define PORTB_CLOCK_ENABLE()   RCC->APB2ENR |= (1<<3)
-#define PORTC_CLOCK_ENABLE()   RCC->APB2ENR |= (1<<4)
-#define PORTD_CLOCK_ENABLE()   RCC->APB2ENR |= (1<<5)
+/**
+ * @brief : Enable clock for GPIO ports
+ **/
+
+#define PORTA_CLOCK_ENABLE()   RCC->APB2ENR |= ((uint32_t)(1<<2))
+#define PORTB_CLOCK_ENABLE()   RCC->APB2ENR |= ((uint32_t)(1<<3))
+#define PORTC_CLOCK_ENABLE()   RCC->APB2ENR |= ((uint32_t)(1<<4))
+#define PORTD_CLOCK_ENABLE()   RCC->APB2ENR |= ((uint32_t)(1<<5))
+
+/**
+ * @brief : Disable clock for GPIO ports
+ **/
+
+#define PORTA_CLOCK_DISABLE()   RCC->APB2ENR &= (~((uint32_t)(1<<2)))
+#define PORTB_CLOCK_DISABLE()   RCC->APB2ENR &= (~((uint32_t)(1<<3)))
+#define PORTC_CLOCK_DISABLE()   RCC->APB2ENR &= (~((uint32_t)(1<<4)))
+#define PORTD_CLOCK_DISABLE()   RCC->APB2ENR &= (~((uint32_t)(1<<5)))
+
+/**
+ * @brief : Macro to check whether the clock is enabled for particular port
+ **/
 
 #define IsClockEnabled_PortA() (RCC->APB2ENR & (1<<2))
 #define IsClockEnabled_PortB() (RCC->APB2ENR & (1<<3))
 #define IsClockEnabled_PortC() (RCC->APB2ENR & (1<<4))
 #define IsClockEnabled_PortD() (RCC->APB2ENR & (1<<5))
 
-/*< STM32 Device Ports */
+/**
+ * @brief : Available ports in stm32f103c8t6 device
+ **/
 
 #define DEVICE_PORT_A            ((uint8_t) 0X00)
 #define DEVICE_PORT_B            ((uint8_t) 0X01)
 #define DEVICE_PORT_C            ((uint8_t) 0X02)
 #define DEVICE_PORT_D            ((uint8_t) 0X03)  /*< If external oscillator is used, this pin conf should be locked*/
 
-/*< STM32 Device Pins */
+/**
+ * @brief : Available pins in stm32f103c8t6 device
+ **/
 /*< Available pins count could vary for port c,d. please refer "GPIO Info STM32F103C8T6" section of header file */
 
 #define DEVICE_PORT_PIN_01       ((uint8_t) 0X01)
@@ -73,14 +98,18 @@
 #define DEVICE_PORT_PIN_14       ((uint8_t) 0X0E)
 #define DEVICE_PORT_PIN_15       ((uint8_t) 0X0F)
 
-/*< STM32 Device Pin Modes */
+/**
+ * @brief : STM32 Deivce Pin Modes
+ **/
 
 #define DEVICE_PIN_MODE_IN           ((uint8_t) 0X00)
 #define DEVICE_PIN_MODE_OUT_10Mhz    ((uint8_t) 0X01)
 #define DEVICE_PIN_MODE_OUT_02Mhz    ((uint8_t) 0X02)
 #define DEVICE_PIN_MODE_OUT_50Mhz    ((uint8_t) 0X03)
 
-/*< STM32 Device Configuration States */
+/**
+ * @brief : STM32 Device Configuration States
+ **/
 
 #define DEVICE_PIN_CONFIG_FUNC_IN_ANALOG                   ((uint8_t) 0X00)
 #define DEVICE_PIN_CONFIG_FUNC_IN_FLOAT                    ((uint8_t) 0X01)
@@ -90,7 +119,9 @@
 #define DEVICE_PIN_CONFIG_FUNC_ALT_OUT_PUSH_PULL           ((uint8_t) 0X02)
 #define DEVICE_PIN_CONFIG_FUNC_ALT_OUT_OPEN_DRAIN          ((uint8_t) 0X03)
 
-/*< STM32 Device Configuration Error */
+/**
+ * @brief : STM32 Device Configuration Error
+ **/
 
 #define DEVICE_PIN_CONFIG_FAILED   ((uint8_t) 0XFF)
 
@@ -105,7 +136,7 @@ typedef struct GPIO_Params_Tag
 {
     uint8_t GPIO_Port;          /*< Refer "STM32 Device Ports" macros for available ports */
     uint8_t GPIO_Pin;           /*< Refer "STM32 Device Pins" macros for available pins */
-    uint8_t GPIO_Mode;          /*< Refer "STM32 Device Pin Modes" macros for available pin modes */
+    uint8_t GPIO_Mode;          /*< Refer "STM32 Deivce Pin Modes" macros for available pin modes */
     uint8_t GPIO_Config_Func;   /*< Refer "STM32 Device Configuration States" macros for available configuration states*/
     uint8_t GPIO_Int;           /*< Boolean value, If this member is set to 1 (Enable/True) then GPIO_Mode, GPIO_Config_Func 
                                     values will be discarded and will be configured for ext interrupt*/

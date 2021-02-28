@@ -1,5 +1,5 @@
 #include <drv.h>
-#include "../api/system.h"
+#include <system.h>
 
 /******************************************************************************************************************************
  *												      Typedefs
@@ -67,7 +67,7 @@ void System_Clk_Params_Init(uint64_t SystemClock, ClockParams_T *ClockParams)
             ClockParams->PLL_Multiplier = RCC_CFGR_PLLMULL6;
             ClockParams->AHB_Prescalar  = RCC_CFGR_HPRE_DIV1;
             ClockParams->APB1_Prescalar = RCC_CFGR_PPRE1_DIV2;
-            ClockParams->APB2_Prescalar = RCC_CFGR_PPRE2_DIV1;
+            ClockParams->APB2_Prescalar = RCC_CFGR_PPRE2_DIV2;
             break;
         }
 
@@ -77,7 +77,7 @@ void System_Clk_Params_Init(uint64_t SystemClock, ClockParams_T *ClockParams)
             ClockParams->PLL_Multiplier = RCC_CFGR_PLLMULL7;
             ClockParams->AHB_Prescalar  = RCC_CFGR_HPRE_DIV1;
             ClockParams->APB1_Prescalar = RCC_CFGR_PPRE1_DIV2;
-            ClockParams->APB2_Prescalar = RCC_CFGR_PPRE2_DIV1;
+            ClockParams->APB2_Prescalar = RCC_CFGR_PPRE2_DIV2;
             break;
         }
 
@@ -87,7 +87,7 @@ void System_Clk_Params_Init(uint64_t SystemClock, ClockParams_T *ClockParams)
             ClockParams->PLL_Multiplier = RCC_CFGR_PLLMULL15;
             ClockParams->AHB_Prescalar  = RCC_CFGR_HPRE_DIV1;
             ClockParams->APB1_Prescalar = RCC_CFGR_PPRE1_DIV2;
-            ClockParams->APB2_Prescalar = RCC_CFGR_PPRE1_DIV1;
+            ClockParams->APB2_Prescalar = RCC_CFGR_PPRE1_DIV2;
             break;
         }
 
@@ -97,7 +97,7 @@ void System_Clk_Params_Init(uint64_t SystemClock, ClockParams_T *ClockParams)
             ClockParams->PLL_Multiplier = RCC_CFGR_PLLMULL9;
             ClockParams->AHB_Prescalar  = RCC_CFGR_HPRE_DIV1;
             ClockParams->APB1_Prescalar = RCC_CFGR_PPRE1_DIV2;
-            ClockParams->APB2_Prescalar = RCC_CFGR_PPRE1_DIV1;
+            ClockParams->APB2_Prescalar = RCC_CFGR_PPRE1_DIV2;
             break;
         }
 	}

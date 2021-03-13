@@ -10,7 +10,8 @@
 /*< FreeRTOS Header files */
 #include <FreeRTOSConfig.h>
 #include <FreeRTOS.h>
-#include <task.h>
+#include <task.h>    
+#include <semphr.h>
 
 
 #endif //__PLATFORM_H__

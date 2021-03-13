@@ -12,6 +12,8 @@
 #include "../demo/stm32_drv/uart/api/uart_app.h"
 
 /*< FreeRTOS application demo header files.  */
-#include "../demo/FreeRTOS/task/api/task.h"
+#include "../demo/FreeRTOS/task/api/task1.h"
+#include "../demo/FreeRTOS/task/api/task2.h"
+#include "../demo/FreeRTOS/semaphore/api/sem.h"
 
 #endif //__APP_H__

@@ -413,9 +413,19 @@
               <FilePath>..\app\demo\sys\src\sys.c</FilePath>
             </File>
             <File>
-              <FileName>task.c</FileName>
+              <FileName>sem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\app\demo\FreeRTOS\task\src\task.c</FilePath>
+              <FilePath>..\app\demo\FreeRTOS\semaphore\src\sem.c</FilePath>
+            </File>
+            <File>
+              <FileName>task1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\app\demo\FreeRTOS\task\src\task1.c</FilePath>
+            </File>
+            <File>
+              <FileName>task2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\app\demo\FreeRTOS\task\src\task2.c</FilePath>
             </File>
           </Files>
         </Group>

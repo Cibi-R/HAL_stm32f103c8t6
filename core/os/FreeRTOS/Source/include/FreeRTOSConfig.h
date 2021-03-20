@@ -46,7 +46,7 @@
 #define xPortPendSVHandler     PendSV_Handler
 #define xPortSysTickHandler    SysTick_Handler
 /*< Ends here */
-
+#define configUSE_MUTEXES           1  /*< Manually Added */
 #define configUSE_PREEMPTION		1
 #define configUSE_IDLE_HOOK			1
 #define configUSE_TICK_HOOK			0

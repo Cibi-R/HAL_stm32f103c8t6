@@ -364,5 +364,9 @@ void FreeRTOS_Task_MulInstance(void *pvParameters)
  * 
  * IMPORTANT: configUSE_IDLE_HOOK must be set to 1 in FreeRTOSConfig.h for the hook function to get called.
  * 
+ * Reference:
+ * http://dev.ti.com/tirex/explore/node?node=ADznPZ0t1iqMbLyS3k3ZFA__fc2e6sr__LATEST#:~:text=The%20TI%2DRTOS%20kernel%20supports,scheduling%20with%20Tasks%20if%20desired.
+ * 
+ * 
  ***********************************************************************************************************************************/
 

@@ -15,5 +15,8 @@
 #include "../demo/FreeRTOS/task/api/task1.h"
 #include "../demo/FreeRTOS/task/api/task2.h"
 #include "../demo/FreeRTOS/semaphore/api/sem.h"
+#include "../demo/FreeRTOS/mutex/api/mutex1.h"
+#include "../demo/FreeRTOS/dma/api/dma1.h"
+#include "../demo/FreeRTOS/dma/api/dma2.h"
 
 #endif //__APP_H__

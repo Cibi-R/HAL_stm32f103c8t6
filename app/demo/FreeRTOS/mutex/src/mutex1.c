@@ -216,5 +216,16 @@ static void FreeRTOS_Mutex_Task2(void *pvParameters)
  * any other task needing to access the resource can do so only indirectly by using the services of the gatekeeper.
  * the services of gatekeeper task can created using queue, task notification or by other methods.
  * 
+ * NOTE: Livelock
+ * Livelock is similar to deadlock except that the states of the processes involved in the livelock constantly change with regard
+ * to one another, none processing. Livelock is a speacial case of resource starvation. the general definition only states that 
+ * specific process is not processing.
+ * As a real world example, livelock occurs when two people meet in a narrow corridor, and each tries to be polite by moving aside
+ * to let the others pass, but they end up swaying from side to side without making any progress because they always  both move
+ * the same way at the same time.
+ * Livelock is a risk with some algorithm that detect and recover from deadlock, if more than process takes action, the deadlock
+ * detection algorithm can repeadly trigger. This can be avoided by ensuring that only one process (choose randomly or by priority)
+ * takes action
+ * 
  *****************************************************************************************************************************************/
 

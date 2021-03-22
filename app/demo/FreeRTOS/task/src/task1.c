@@ -237,26 +237,28 @@ void FreeRTOS_Task_MulInstance(void *pvParameters)
  *    running state.
  * 
  * NOTE: Task Priority
- * 1. The uxPriority parameter of the xTaskCreate() API function assigns an initial priority of the task being created.
+ * 1. The uxPriority parameter of the xTaskCreate() (explained above) API function assigns an initial priority of the task being created.
  * 2. The priority can be changed after the scheduler has been started by using the vTaskPrioritySet() API function
- * 3. Maximum number of available priority is set by the application-defined configMAX_PRIORITIES constance in FreeRTOSConfig.h
+ * 3. Maximum number of available priority is set by the application-defined configMAX_PRIORITIES constant in FreeRTOSConfig.h
  *    with 0 being the lowest priority possible, therefore the range of available priorities is 0 to configMAX_PRIORITIES-1
  * 4. Any number of task can share the same priority. The freeRTOS scheduler can use two one of two methods to decide which task
- *    will be in the running state. the maximum value to which configMAX_PRIORITIES can be set depends on the methods used.
- *    1. Generic Method
- *    2. Architecture optimized method
+ *    will be in the running state.
+ *  
+ * the maximum value to which configMAX_PRIORITIES can be set depends on the methods used.
+ * 1. Generic Method
+ * 2. Architecture optimized method
  * 
  * Generic Method
  * The generic method is implemented in C, and can be used with all the FreeRTOS architure ports. when the generic method is used
  * FreeRTOS does not limit the maximum value to which configMAX_PRIORITIES can be set. it is always advisable to keep it minimum
- * necessary because the the highes its value, the more RAM memory will be consumed and the longer the worst case execution time.
+ * necessary because the the highest its value, the more RAM memory will be consumed and the longer the worst case execution time.
  * 
  * The generic method will be used if configUSE_PORT_OPTIMISED_TASK_SELECTION is set to 0 in FreeRTOSConfig.h or if it is left
  * undefined or if the generic method is the only method provided for the FreeRTOS port in use.
  * 
  * Architecture Optimized method
  * The architecture optimized method uses a small amount of assembler code. and is faster than the generic code. The 
- * configMAX_PRIORITIES setting does not affect the wors case execution time. and configMAX_PRIORITIES cannot be greater than 32
+ * configMAX_PRIORITIES setting does not affect the worst case execution time. and configMAX_PRIORITIES cannot be greater than 32
  * This method will be used if configUSE_PORT_OPTIMISED_TASK_SELECTION is set to 1 in FreeRTOSConfig.h
  * 
  * Not all FreeRTOS ports provide an architure optimized method.
@@ -273,13 +275,13 @@ void FreeRTOS_Task_MulInstance(void *pvParameters)
  *    tick interrupt frequency. which is configured by application defined constant configTICK_RATE_HZ in FreeRTOSConfig.h
  * 3. if configTICK_RATE_HZ is 100, then the time slice is 10ms
  * 4. FreeRTOS APIs always specifiy time in multiples of tick periods, which are often refered to as ticks. the pdMS_TO_TICKS() macro
- *    converts a time specified in milliseconds into a time specidfied in ticks. The resolution available depends on the defined tick
+ *    converts a time specified in milliseconds into a time specified in ticks. The resolution available depends on the defined tick
  *    frequency, and pdMS_TO_TICKS() cannot be used if tick frequence is above 1KHz
  * ex. TickType_t xTimeInTicks = pdMS_TO_TICKS(200); xTimeInTicks being set to the number of tick periods that are equivalent to
  *                                                   200 milleseconds. 
  * 5. It is not recommended to specify times in ticks directly, but instead to use the pdMS_TO_TICKS(), and in doing so, ensuring 
  *    time specified within the application do not change if the tick frequence is changed.
- * 6. The ‘tick count’ value is the total number of tick interrupts that have occurred since the scheduler was started User applcation 
+ * 6. The ‘tick count’ value is the total number of tick interrupts that have occurred since the scheduler was started User application 
  *    do not have to consider overflow when specifying delay periods, as time consistency is managed internally by FreeRTOS
  * 
  * IMPORTANT:
@@ -316,7 +318,7 @@ void FreeRTOS_Task_MulInstance(void *pvParameters)
  * 
  * Suspended State:
  * 1. Suspended is also a sub-state of not running state. Tasks in the suspended state are not available to the scheduler
- * 2. The only into the suspended state is through a call to the vTaskSuspend() API function. the only way out being through a call
+ * 2. The only way into the suspended state is through a call to the vTaskSuspend() API function. the only way out being through a call
  *    to the vTaskResume() or xTaskResumeFromISR() API functions. Most application do not use suspended state.
  * 
  * Ready State:
@@ -343,7 +345,7 @@ void FreeRTOS_Task_MulInstance(void *pvParameters)
  * This is because the idle task is responsible for cleaning up kernel resources after a task has been deleted.
  * 
  * IDLE hook function:
- * It is possible to add application specific functionality directly into the idle task throught the use of an idle hook (or callback)
+ * It is possible to add application specific functionality directly into the idle task through the use of an idle hook (or callback)
  * funciton. a function that is called automatically by the idle task once per iteration of the idle task loop.
  * 
  * IMPORTANT:
@@ -363,6 +365,9 @@ void FreeRTOS_Task_MulInstance(void *pvParameters)
  *    period. This is becuase the idle task is responsible for cleaning up kernel resources after a task has been deleted.
  * 
  * IMPORTANT: configUSE_IDLE_HOOK must be set to 1 in FreeRTOSConfig.h for the hook function to get called.
+ * 
+ * Idle task hook functions must have the name and prototype:
+ * void vApplicationIdleHook( void );
  * 
  * Reference:
  * http://dev.ti.com/tirex/explore/node?node=ADznPZ0t1iqMbLyS3k3ZFA__fc2e6sr__LATEST#:~:text=The%20TI%2DRTOS%20kernel%20supports,scheduling%20with%20Tasks%20if%20desired.

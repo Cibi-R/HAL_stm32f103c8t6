@@ -1,5 +1,101 @@
 #include <app.h>
 
+/**
+ * QueueHandle_t xQueueCreate( UBaseType_t uxQueueLength, UBaseType_t uxItemSize );
+ * 
+ * @brief  :  
+ * 1. A queue must be explicitly created before it can be used.
+ * 2. Queues are referenced by handles, which are variables of type QueueHandle_t. The xQueueCreate() API function creates a queue and returns 
+ *    a QueueHandle_t that references the queue it created.
+ * 3. FreeRTOS V9.0.0 also includes the xQueueCreateStatic() function, which allocates the memory required to createa queue statically at 
+ *    compile time
+ * 4. The RAM is used to hold both the queue data structures and the items that are contained in the queue. xQueueCreate() will return NULL if 
+ *    there is insufficient heap RAM available for the queue to be created.
+ * 
+ * @param  :
+ * uxQueueLength  :  The maximum number of items that the queue being created can hold at any one time
+ * uxItemSize     :  The size in bytes of each data item that can be stored in the queue.
+ * 
+ * @return : If NULL is returned, then the queue cannot be created because there is insufficient heap memory available for FreeRTOS to allocate 
+ *           the queue data structures and storage area.
+ *           A non-NULL value being returned indicates that the queue has been created successfully. The returned value should be stored as the 
+ *           handle to the created queue.
+ * 
+ * After queue has been created the xQueueReset() API function can be used to return the queue to its original empty state.
+ **/
+
+/**
+ * BaseType_t xQueueSendToFront( QueueHandle_t xQueue,const void * pvItemToQueue, TickType_t xTicksToWait );
+ * 
+ * @brief: xQueueSendToFront() is used to send data to the front (head) of a queue.
+ * 
+ * BaseType_t xQueueSendToBack( QueueHandle_t xQueue, const void * pvItemToQueue, TickType_t xTicksToWait );
+ * 
+ * @brief: xQueueSendToBack() is used to send data to the back (tail) of a queue
+ * 
+ * @param: 
+ * xQueue  : The handle of the queue to which the data is being sent (written). The queue handle will have been returned from the call to
+ *           xQueueCreate() used to create the queue.
+ * pvItemToQueue : A pointer to the data to be copied into the queue, The size of each item that the queue can hold is set when the queue is
+ *                 created, so this many bytes will be copied from pvItemToQueue into the queue storage area.
+ * xTicksToWait  : 1. The maximum amount of time the task should remain in the Blocked state to wait for space to become available on the queue,
+ *                    should the queue already be full.
+ *                 2. Both xQueueSendToFront() and xQueueSendToBack() will return immediately if xTicksToWait is zero and the queue is already full.
+ *                    The block time is specified in tick periods, so the absolute time itrepresents is dependent on the tick frequency. The macro
+                      pdMS_TO_TICKS() can be used to convert a time specified in milliseconds into a time specified in ticks.
+                   3. Setting xTicksToWait to portMAX_DELAY will cause the task to wait indefinitely (without timing out),  
+                      provided INCLUDE_vTaskSuspend is set to 1 in FreeRTOSConfig.h.
+ *
+ * @return: There are two possible return values:
+ *          1. pdPASS
+ *             a. pdPASS will be returned only if data was successfully sent to the queue.
+ *             b. If a block time was specified (xTicksToWait was not zero), then it is possible the calling task was placed into the 
+ *                Blocked state, to wait for space to become available in the queue, before the function returned, but data was successfully
+ *                written to the queue before the block time expired.
+ *          2. errQUEUE_FULL
+ *             a. errQUEUE_FULL will be returned if data could not be written to the queue because the queue was already full.
+ *             b. If a block time was specified (xTicksToWait was not zero) then the calling task will have been placed into the Blocked
+ *                state to wait for another task or interrupt to make space in the queue, but the specified block time expired before that
+ *                happened.
+ * 
+ **/
+
+/**
+ * BaseType_t xQueueReceive( QueueHandle_t xQueue,void * const pvBuffer, TickType_t xTicksToWait );
+ * 
+ * QueueHandle_t  :  BaseType_t xQueueReceive( QueueHandle_t xQueue,void * const pvBuffer, TickType_t xTicksToWait );
+ * pvBuffer       :  1. A pointer to the memory into which the received data will be copied
+ *                   2. The size of each data item that the queue holds is set when the queue is created. The memory pointed to by pvBuffer
+ *                      must be at least large enough to hold that many bytes.
+ * xTicksToWait   :  1. The maximum amount of time the task should remain in the Blocked state to wait for data to become available on the queue,
+ *                      should the queue already be empty
+ *                   2. The block time is specified in tick periods, so the absolute time it represents is dependent on the tick frequency.
+ *                      The macro pdMS_TO_TICKS() can be used to convert a time specified in milliseconds into a time specified in ticks.
+ *                   3. Setting xTicksToWait to portMAX_DELAY will cause the task to wait indefinitely (without timing out) provided
+ *                      INCLUDE_vTaskSuspend is set to 1 in FreeRTOSConfig.h.
+ * 
+ * @return : There are two possible return values:
+ *           1. pdPASS
+ *           2. pdPASS will be returned only if data was successfully read from the queue.
+ *           3. If a block time was specified (xTicksToWait was not zero), then it is possible the calling task was placed into the Blocked state,
+ *              to wait for data to become available on the queue, but data was successfully read from the queue before the block time expired.
+ * 
+ *           1. errQUEUE_EMPTY
+ *           2. errQUEUE_EMPTY will be returned if data cannot be read from the queue because the queue is already empty.
+ *           3. If a block time was specified (xTicksToWait was not zero,) then the calling task will have been placed into the Blocked state
+ *              to wait for another task or interrupt to send data to the queue, but the block time expired before that happened.
+ **/
+ 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -70,6 +166,10 @@
  * 
  * NOTE: Blocking on Multiple Queues
  * 1. Queues can be grouped into sets, allowing a task to enter the Blocked state to wait for data to become available on any of the
- *    queues in the set. 
+ *    queues in the set.
+ * 
+ * NOTE: Using a queue
+ * NOTE: The xQueueCreate() API Function
+ * NOTE: The xQueueSendToBack() and xQueueSendToFront() API Functions 
  * 
  *****************************************************************************************************************************************/

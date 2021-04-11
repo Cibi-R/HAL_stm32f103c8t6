@@ -4,10 +4,25 @@
  *												Local fucntion declarations
  ******************************************************************************************************************************/
 
+/**
+ * @brief : This function is used to get the base address of the UART channel
+ * @param : uint8_t - Refer UART Channels to check available UART channels 
+ * @return: USART_TypeDef - Base address of the UART peripheral - Line 1239 of stm32f10x.h
+ **/
 static USART_TypeDef* UART_GetBase_Add(uint8_t uartChannel);
 
+/**
+ * @brief : To check if the UART channel is availble or not, UART_Handles will hold the already configured UART channels
+ * @param : uint8_t - Refer UART Channels to check available UART channels
+ * @return: uint8_t 
+ **/
 static uint8_t UART_Is_Channel_Available(uint8_t channel);
 
+/**
+ * @brief : To initialize the UART channel with the supplied configuration
+ * @param : UART_Params_T
+ * @return: uint8_t
+ **/
 extern uint8_t UART_Init(UART_Params_T *uartParams);
 
 
@@ -15,12 +30,16 @@ extern uint8_t UART_Init(UART_Params_T *uartParams);
  * @brief: Global handle variable to hold the status of configured UART channel, This avoids the re-initialization or re instantiation of 
  *         of any particular UART channel
  **/
-UART_Handle_T UART_Handles[DEVICE_UART_CHANNEL_MAX] =
+UART_Handle_Tag UART_Handles[DEVICE_UART_CHANNEL_MAX] =
 {
 	{DEVICE_UART_CHANNEL_NONE, NULL, DEVICE_UART_MODE_NONE},
 	{DEVICE_UART_CHANNEL_NONE, NULL, DEVICE_UART_MODE_NONE},
 	{DEVICE_UART_CHANNEL_NONE, NULL, DEVICE_UART_MODE_NONE},
 };
+
+/******************************************************************************************************************************
+ *												          UART ISRs
+ ******************************************************************************************************************************/
 
 /**
  * @brief: UART1 interrupt handler
@@ -51,6 +70,9 @@ void USART3_IRQHandler(void)
  *												    Function Definitions
  ******************************************************************************************************************************/
 
+/**
+ * @brief: This function is used to get the base address of the UART channel
+ **/
 
 static USART_TypeDef* UART_GetBase_Add(uint8_t uartChannel)
 {
@@ -84,9 +106,7 @@ static USART_TypeDef* UART_GetBase_Add(uint8_t uartChannel)
 }
 
 /**
- * @brief :  
- * @param : 
- * @return: 
+ * @brief : To check if the UART channel is availble or not, UART_Handles will hold the already configured UART channels
  **/
 
 static uint8_t UART_Is_Channel_Available(uint8_t channel)
@@ -108,7 +128,8 @@ static uint8_t UART_Is_Channel_Available(uint8_t channel)
 
 /**
  * @brief: To set the default values for UART peripheral while initialization, Refer uart.h for more information
- */
+ **/
+
 void UART_Params_Init(UART_Params_T *uartParams)
 {
 	uartParams->uart_Channel       = DEVICE_UART_CHANNEL_NONE;
@@ -121,12 +142,16 @@ void UART_Params_Init(UART_Params_T *uartParams)
 	uartParams->uart_RxCallBack    = NULL;
 }
 
-UART_Handle_T* UART_SetConfig(UART_Params_T *uartParams)
+/**
+ * @brief: To configure the UART channel with the supplied configuration 
+ **/
+
+UART_Handle_T UART_SetConfig(UART_Params_T *uartParams)
 {
-	UART_Handle_T *uartHandle = NULL;
+	UART_Handle_T uartHandle = NULL;
 
 	if (NULL != uartParams)
-	{
+	{		
 		if (UART_Is_Channel_Available(uartParams->uart_Channel))
 		{
 			if (UART_Init(uartParams))
@@ -151,11 +176,15 @@ UART_Handle_T* UART_SetConfig(UART_Params_T *uartParams)
 	return uartHandle;
 }
 
-void UART_ReleaseConfig(UART_Handle_T* uarthandle)
+/**
+ * @brief: To release the configured UART channel 
+ **/
+
+void UART_ReleaseConfig(UART_Handle_T uartHandle)
 {
-	uarthandle->uart_Channel       = DEVICE_UART_CHANNEL_NONE;
-	uarthandle->uart_Handle        = NULL;
-	uarthandle->uart_OperatingMode = DEVICE_UART_MODE_NONE;
+	uartHandle->uart_Channel       = DEVICE_UART_CHANNEL_NONE;
+	uartHandle->uart_Handle        = NULL;
+	uartHandle->uart_OperatingMode = DEVICE_UART_MODE_NONE;
 }
 
 /**
@@ -169,6 +198,9 @@ uint8_t UART_Init(UART_Params_T *uartParams)
 
 	if ((UART1 == uartHandle) || (UART2 == uartHandle) || (UART3 == uartHandle))
 	{
+		/*< Enable clock before start configuring the UART channel */
+		UART_Open(uartParams->uart_Channel);
+		
 		/*< Reset the registers before assigning values. */
 		uartHandle->CR1 = 0X00000000;
 		uartHandle->BRR = 0X00000000;
@@ -178,14 +210,14 @@ uint8_t UART_Init(UART_Params_T *uartParams)
 		uartHandle->CR1 |= (0u << 12);
 
 		/*< Configure the parity control and selection bits. */
-		if (0)
+		if (DEVICE_UART_PARITY_NONE != uartParams->uart_Parity)
 		{
 			/*< Enable Parity Control. */
 			uartHandle->CR1 |= (1 << 10);
 
 			/*< Parity Selection. */
 			uartHandle->CR1 &= (~(1 << 9));
-			// uartHandle->CR1 |= (InitStruct->ParitySelection << 9);
+			uartHandle->CR1 |= ((uint32_t)uartParams->uart_Parity << 9);
 		}
 
 		else
@@ -223,18 +255,20 @@ uint8_t UART_Init(UART_Params_T *uartParams)
 		/*< Enable USART Peripheral. */
 		uartHandle->CR1 |= (1<<13);
 
+#if 0  // If the clock needs to disabled to save power, from application we can control using UART_Close, UART_Open APIs
+		/*< Disable clock after configuring the UART channel */
+		UART_Close(uartParams->uart_Channel);
+#endif
 		return True;
 	}
 
 	return False;
 }
 
-uint8_t UART_Open(UART_Handle_T *uart_params)
+void UART_Open(uint8_t uartChannel)
 {
-	uint8_t retVal = True;
-
 	/*< Enable clock for UART */
-	switch (uart_params->uart_Channel)
+	switch (uartChannel)
 	{
 		case DEVICE_UART_CHANNEL_1:
 		{
@@ -253,20 +287,18 @@ uint8_t UART_Open(UART_Handle_T *uart_params)
 		}
 		default:
 		{
-			retVal = False;
+			/*< Do Nothing */
 			break;
 		}	
 	}
 
 	/*< Enable UART interrupt in NVIC */
-
-	return retVal;
 }
 
-void UART_Close(UART_Handle_T *uart_params)
+void UART_Close(uint8_t uartChannel)
 {
 	/*< Disable clock for UART */
-	switch (uart_params->uart_Channel)
+	switch (uartChannel)
 	{
 		case DEVICE_UART_CHANNEL_1:
 		{
@@ -292,41 +324,45 @@ void UART_Close(UART_Handle_T *uart_params)
 	/*< Disable UART interrupt */
 }
 
-void UART_TxByte(UART_Handle_T *uart_params, uint8_t data)
+void UART_TxByte(UART_Handle_T uartHandle, uint8_t data)
 {
-	while (!(USART1->SR & (1 << 6)))
-		;
+	if (NULL != uartHandle)
+	{
+		while (!(uartHandle->uart_Handle->SR & (1 << 6)))
+			;
 
-	USART1->DR = data;
+		uartHandle->uart_Handle->DR = data;
+	}
 }
 
-void UART_TxString(UART_Handle_T *uart_params, uint8_t *data, uint16_t len)
+void UART_TxString(UART_Handle_T uartHandle, uint8_t *data, uint16_t len)
 {
 	uint16_t i;
 	
 	for (i = 0; i < len; i++)
 	{
-		UART_TxByte(uart_params, data[i]);
+		UART_TxByte(uartHandle, data[i]);
 	}
 }
 
-void UART_TxCancel(UART_Handle_T *uart_params)
+void UART_TxCancel(UART_Handle_T uartHandle)
 {
 
 }
 
-uint8_t UART_Read(UART_Handle_T *uart_params)
+uint8_t UART_Read(UART_Handle_T uartHandle)
 {
-	if (uart_params->uart_Handle->SR & (1<<5))
+	if (uartHandle->uart_Handle->SR & (1<<5))
 	{
-		uart_params->uart_Handle->SR &= (~(1<<5));
-		return uart_params->uart_Handle->DR;
+		uartHandle->uart_Handle->SR &= (~(1<<5));
+
+		return uartHandle->uart_Handle->DR;
 	}
 
 	return 0;
 }
 
-void UART_Read_Polling(UART_Handle_T *uart_params)
+void UART_Read_Polling(UART_Handle_T uartHandle)
 {
 
 }

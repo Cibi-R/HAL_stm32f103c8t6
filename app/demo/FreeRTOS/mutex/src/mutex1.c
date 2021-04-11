@@ -149,7 +149,7 @@ static void FreeRTOS_Mutex_Task2(void *pvParameters)
  * 2. Priority inheritance is a scheme that minimuzes the negative side effects of priority inversion. it does not fix priority inversion
  *    but merely lessens its impact by ensuring that the inversion is always time bounded. However, priority inheritance complicates
  *    system timing analysis, and it is not good practice to rely on it for correct system operation.
- * 3. Priority inheritance works by temporarily raising the priority of the mutex holder to the priority of the highes priority task that
+ * 3. Priority inheritance works by temporarily raising the priority of the mutex holder to the priority of the highest priority task that
  *    is atttempting to obtain the same mutex. 
  * 4. the low priority task that holds the mutex inherits the priority of the task waiting for the mutex.
  * 5. the priority of the mutex holder is reset automatically to its original value when it gives the mutex back.
@@ -167,18 +167,18 @@ static void FreeRTOS_Mutex_Task2(void *pvParameters)
  * NOTE: Deadlock (or Deadly embrace):
  * Deadlock is another pitfall of using mutexes for mutual exclusion. Deadlock is sometimes also known by the more dramatic name
  * deadly embrace.
- * Deadlock occurs when two tasks cannot proceed because they are both waiting for a resource that is held by the other. 
+ * Deadlock occurs when two tasks cannot proceed because they are both waiting for a resource that is held by the each other. 
  * 
  * Consider the following scenario:
  * 1. TaskA executes successully and takes mutex X.
  * 2. TaskA pre-empted by TaskB
  * 3. TaskB successfully take mutex Y, while attempting to take mutex X it is moved to blocked state (mutex X is held by TaskA)
- * 4. TaskA continues executing, it attempts to take mute Y and moves to blocked state (mutex Y is held by TaskB)
+ * 4. TaskA continues executing, it attempts to take mutex Y and moves to blocked state (mutex Y is held by TaskB)
  * 
  * At the end of this scenario, Task A is waiting for a mutex held by TaskB and TaskB is waiting for a mutex held by TaskA. Deadlock is
  * occurred because neither task can proceed.
  * 
- * a. As with priority inversio, the best method of avoiding deadlock is to consider its potential at design time, and design the system
+ * a. As with priority inversion, the best method of avoiding deadlock is to consider its potential at design time, and design the system
  *    to ensure that deadlock cannot occur.
  * b. It is normally bad practice for a task to wait indefintely (without a time out) to obtain a mutex. Instead, use a time out that is 
  *    little longer than the maximum time it is expected to have to wait, then failure to obtain mutex within the time will be a symptom 
@@ -188,14 +188,14 @@ static void FreeRTOS_Mutex_Task2(void *pvParameters)
  * entire application, and so can indentify and remove the areas where it could occur.
  * 
  * NOTE: Recursive Mutexes:
- * If is also possible for a task to deadlock with itself. this will happen if a task attempts to take the same mutex more than once, 
+ * It is also possible for a task to deadlock with itself. this will happen if a task attempts to take the same mutex more than once, 
  * without returning the mutex. 
  * Consider the following scenario:
  * 1. A task successfully obtain the mutex.
  * 2. While holding the mutex, the task calls the library function
  * 3. The implementation of the library fucntion attempts to take the same mutex, and enters the blocked state to wait for the mutex to
  *    become available.
- * At the end of the scenario the task is in the blocked state to wait for the mutex to be returned, the but the task is already the
+ * At the end of the scenario the task is in the blocked state to wait for the mutex to be returned, but the task is already the
  * mutex holder. A deadlock has occurred because the task in the blocked state to wait for itself.
  * This type of deadlock can be avoided by using the recursive mutex in place of the standard mutex. A recursive mutex can be taken more
  * than once by the same task, and will be returned only after one call to give the recursive mutex has been executed for every 
@@ -204,8 +204,7 @@ static void FreeRTOS_Mutex_Task2(void *pvParameters)
  * Standard and Recursive mutexes are created in the same way:
  * 1. Recursive mutexes are created using xSemaphoreCreateRecursiveMutex()
  * 2. Recursive mutexes are ‘taken’ using xSemaphoreTakeRecursive()
- * 3. Recursive mutexes are ‘given’ using xSemaphoreGiveRecursive()
- * 4. 
+ * 3. Recursive mutexes are ‘given’ using xSemaphoreGiveRecursive() 
  * 
  * NOTE: Mutexes and task scheduling:
  * 

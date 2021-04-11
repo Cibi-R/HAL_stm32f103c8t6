@@ -8,9 +8,9 @@ void UART1_Test_App(void)
 	
 	/*< Variable used for UART initialization and handling */
 	UART_Params_T UART_Params;
-	UART_Handle_T *UART_Handle;
+	UART_Handle_T UART_Handle;
 	
-	char UART_String[] = "UART String\n\r";
+	char UART_String[] = "UART test string\n\r";
 	
 	/* UART-1 */
 	PA9.GPIO_Port = DEVICE_PORT_A;
@@ -38,10 +38,6 @@ void UART1_Test_App(void)
 	UART_Params.uart_TxCallBack    = NULL;
 	UART_Params.uart_RxCallBack    = NULL;
 	
-	// UART_Open(UART_Handle);
-	
-	UART1_CLOCK_ENABLE();
-	
 	GPIO_SetConfig(&PA9);
 	GPIO_SetConfig(&PA10);
 	
@@ -50,7 +46,8 @@ void UART1_Test_App(void)
 	
 	UART_TxString(UART_Handle, (uint8_t*)&UART_String[0], sizeof(UART_String));
 	
-	// UART_Close(UART_Handle);
+	/*< If the UART clock disabled excplicity, it needs to enabled before next transaction */
+	UART_Close(UART_Handle->uart_Channel);
 }
 
 

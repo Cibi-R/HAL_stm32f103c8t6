@@ -85,14 +85,14 @@
 
 typedef struct UART_Params_Tag
 {
-    uint8_t uart_Channel;           /*< Refer "UART Channels" macros for available ports */
-    uint8_t uart_OperatingMode;     /*< */
-    uint8_t uart_WordLength;        /*< */
-    uint8_t uart_StopBits;          /*< */
-    uint8_t uart_Parity;            /*< */
-    uint8_t uart_RxCallBack;        /*< */
-    uint8_t uart_TxCallBack;        /*< */
-	uint16_t uart_Baudrate;         /*< */
+    uint8_t uart_Channel;           /*< Refer "UART Channels" macros */
+    uint8_t uart_OperatingMode;     /*< Refer "UART Modes" macros */
+    uint8_t uart_WordLength;        /*< Refer "UART Packet Length" macros */
+    uint8_t uart_StopBits;          /*< Refer "UART Frame StopBits" macros */
+    uint8_t uart_Parity;            /*< Refer "UART Parity Bits" macros */
+    uint8_t uart_RxCallBack;        /*< Not yet implemented */
+    uint8_t uart_TxCallBack;        /*< Not yet implemented */
+	uint16_t uart_Baudrate;         /*< Refer  "UART Baudrate" macro */
 }UART_Params_T;
 
 typedef struct UART_Handle_Tag
@@ -101,84 +101,79 @@ typedef struct UART_Handle_Tag
     USART_TypeDef *uart_Handle;     /*< Refer "UART Peripheral Base address" macros for base address
                                         This member holds the base address of UART peripheral in flash memory */
     uint8_t uart_OperatingMode;     /*< Refer "UART Modes" macros for operating modes */
-}UART_Handle_T;
+}UART_Handle_Tag;
 
+typedef UART_Handle_Tag* UART_Handle_T;
 
 /**
- * @brief : 
- * @param :
- * @return:
+ * @brief : To set the default values for UART peripheral while initialization
+ * @param : UART_Params_T
+ * @return: void
  **/
 extern void UART_Params_Init(UART_Params_T *uartParams);
 
 /**
- * @brief : 
- * @param :
- * @return:
+ * @brief : To configure the UART channel with the supplied configuration
+ * @param : UART_Params_T
+ * @return: UART_Handle_T
  **/
-extern UART_Handle_T*  UART_SetConfig(UART_Params_T *uartParams);
+extern UART_Handle_T  UART_SetConfig(UART_Params_T *uartParams);
+
+/**
+ * @brief : To release the configured UART channel
+ * @param : UART_Handle_T
+ * @return: void
+ **/
+extern void UART_ReleaseConfig(UART_Handle_T uartHandle);
+
+/**
+ * @brief: To enable clock to the UART peripheral, By default UART clock will be enabled after configuration if closed exclicitly (UART_Close), 
+ *         we need enable the enable clock
+ * @param: uint8_t
+ * @return:void
+ **/
+extern void UART_Open(uint8_t uartChannel);
+
+/**
+ * @brief : To disable clock to the UART peripheral, If disabled, the clock needs to enabled before the next use of the UART
+ * @param : uartChannel
+ * @return: void
+ **/
+extern void UART_Close(uint8_t uartChannel);
 
 /**
  * @brief : 
  * @param :
- * @return: 
+ * @return:
  **/
-extern void UART_ReleaseConfig(UART_Handle_T* uarthandle);
+extern void UART_TxByte(UART_Handle_T uartHandle, uint8_t data);
 
 /**
  * @brief:
  * @param:
  * @return:
  **/
-extern uint8_t UART_Open(UART_Handle_T *uart_params);
+extern void UART_TxString(UART_Handle_T uartHandle, uint8_t *data, uint16_t len);
 
 /**
  * @brief:
  * @param:
  * @return:
  **/
-extern void UART_Close(UART_Handle_T *uart_params);
+extern void UART_TxCancel(UART_Handle_T uartHandle);
 
 /**
  * @brief:
  * @param:
  * @return:
  **/
-extern void UART_TxByte(UART_Handle_T *uart_params, uint8_t data)                                                                       ;
+extern uint8_t UART_Read(UART_Handle_T uartHandle);
 
 /**
  * @brief:
  * @param:
  * @return:
  **/
-extern void UART_TxString(UART_Handle_T *uart_params, uint8_t *data, uint16_t len);
-
-/**
- * @brief:
- * @param:
- * @return:
- **/
-extern void UART_TxPolling(UART_Handle_T *uart_params, const char *data);
-
-/**
- * @brief:
- * @param:
- * @return:
- **/
-extern void UART_TxCancel(UART_Handle_T *uart_params);
-
-/**
- * @brief:
- * @param:
- * @return:
- **/
-extern uint8_t UART_Read(UART_Handle_T *uart_params);
-
-/**
- * @brief:
- * @param:
- * @return:
- **/
-extern void UART_Read_Polling(UART_Handle_T *uart_params);
+extern void UART_Read_Polling(UART_Handle_T uartHandle);
 
 #endif //__UART_H__

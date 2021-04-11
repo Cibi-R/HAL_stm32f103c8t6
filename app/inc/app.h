@@ -18,5 +18,6 @@
 #include "../demo/FreeRTOS/mutex/api/mutex1.h"
 #include "../demo/FreeRTOS/dma/api/dma1.h"
 #include "../demo/FreeRTOS/dma/api/dma2.h"
+#include "../demo/FreeRTOS/queue/api/queue1.h"
 
 #endif //__APP_H__

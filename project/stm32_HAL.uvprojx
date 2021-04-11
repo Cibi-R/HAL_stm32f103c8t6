@@ -442,6 +442,16 @@
               <FileType>1</FileType>
               <FilePath>..\app\demo\FreeRTOS\dma\src\dma2.c</FilePath>
             </File>
+            <File>
+              <FileName>queue1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\app\demo\FreeRTOS\queue\src\queue1.c</FilePath>
+            </File>
+            <File>
+              <FileName>event_group.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\app\demo\FreeRTOS\event_groups\src\event_group.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

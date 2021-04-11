@@ -81,7 +81,7 @@ void FreeRTOS_Task_5sub(void* pvParameters)
 
 /*****************************************************************************************************************************************
  * Changing the task priority:
- * 1. The vTaskPrioritySet() API funciton can be used to chang the priority of any task after the scheduler has been started.
+ * 1. The vTaskPrioritySet() API function can be used to change the priority of any task after the scheduler has been started.
  * 2. vTaskPrioritySet() is only available when INCLUDE_vTaskPrioritySet is set to 1 in FreeRTOSConfig.h
  * 3. uxTaskPriorityGet() API function can be used to query the priority of a task. Note that this function is available only when 
  *    INCLUDE_uxTakPriorityGet is set to 1 in FreeRTOSConfig.h
@@ -148,10 +148,10 @@ void FreeRTOS_Task_5sub(void* pvParameters)
  *    if there are other ready state tasks that have the same priority as the running task. A time slice is equal to the time between two RTOS
  *    tick interrupts.
  * 
- * IDLE tasd configuration:
+ * IDLE task configuration:
  * 1. if configIDLE_SHOULD_YIELD is set to 0 then the idle task will remain in the running state for the entierity of its time slice
  *    unless it is preempted by a higher priority task
- * 2. if configIDLE_SHOUDL_YIELD is set to 1 then the idle task will yield on each iteration of its loop if there are other idle priority
+ * 2. if configIDLE_SHOULD_YIELD is set to 1 then the idle task will yield on each iteration of its loop if there are other idle priority
  *    tasks in the ready state.
  * 
  * Prioritized Pre-emptive scheduling without time slicing:

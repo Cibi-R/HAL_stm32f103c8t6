@@ -13,6 +13,6 @@
 #include <task.h>    
 #include <semphr.h>
 #include <queue.h>
-
+#include <event_groups.h>
 
 #endif //__PLATFORM_H__

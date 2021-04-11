@@ -35,7 +35,7 @@ int main(void)
 
 	UART1_Test_App();
 
-#if 1
+#if 0
     FreeRTOS_Task_Demo();
 #endif
 	while (1);

@@ -102,5 +102,6 @@
  * System Handlers:
  * NMI, PendSV, SVCall SysTick, and the fault exceptions are all system exceptions that are handled by system handlers.
  * 
- * NOTE: Vector Table
+ * Refer Remaining Part in Manual :)
+ * 
  *****************************************************************************************************************************************/

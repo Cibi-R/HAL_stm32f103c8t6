@@ -1,0 +1,50 @@
+
+
+/*****************************************************************************************************************************************
+ * NOTE: Introduction to Event groups:
+ * 1. It has already been noted that real-time embedded systems have to take actions in response to events.
+ * 2. such features include semaphores and queues, both of which have the following properties
+ *    a. They allow a task to wait in the Blocked state for a single event to occur. 
+ *    b. They unblock a single task when the event occurs—the task that is unblocked is the highest priority task that was waiting for the event.
+ * 3. Event groups are another feature of FreeRTOS that allow events to be communicated to tasks. Unlike queues and semaphores:
+ *    a. Event groups allow a task to wait in the Blocked state for a combination of one of more events to occur.
+ *    b. Event groups unblock all the tasks that were waiting for the same event, or combination of events, when the event occurs.
+ * 4. These unique properties of event groups make them useful for synchronizing multiple tasks, broadcasting events to more than one task,
+ *    allowing a task to wait in the Blocked state for any one of a set of events to occur, and allowing a task to wait in the Blocked state
+ *    for multiple actions to complete.
+ * 5. Event groups also provide the opportunity to reduce the RAM used by an application, as often it is possible to replace many binary
+ *    semaphores with a single event group.
+ * 6. Event group functionality is optional. To include event group functionality, build the FreeRTOS source file event_groups.c as part of
+ *    your project.
+ * 
+ * NOTE: Characteristics of event groups - Event Groups, Event Flags and Event Bits
+ * 1. An event ‘flag’ is a Boolean (1 or 0) value used to indicate if an event has occurred or not. An event ‘group’ is a set of event flags
+ * 2. An event flag can only be 1 or 0, allowing the state of an event flag to be stored in a single bit, and the state of all the event flags
+ *    in an event group to be stored in a single variable; the state of each event flag in an event group is represented by a single bit in a
+ *    variable of type EventBits_t. For that reason, event flags are also known as event ‘bits’.
+ * 3. If a bit is set to 1 in the EventBits_t variable, then the event represented by that bit has occurred. If a bit is set to 0
+ *    in the EventBits_t variable, then the event represented by that bit has not occurred
+ * 4. As an example, if the value of an event group is 0x92 (binary 1001 0010) then only event bits 1, 4 and 7 are set, so only the events
+ *    represented by bits 1, 4 and 7 have occurred. Figure 72 shows a variable of type EventBits_t that has event bits 1, 4 and 7 set, and all
+ *    the other event bits clear, giving the event group a value of 0x92.
+ *    NOTE: Refer image1
+ * 
+ * NOTE: More About the EventBits_t Data Type
+ * 1. The number of event bits in an event group is dependent on the configUSE_16_BIT_TICKS compile time configuration constant within
+ *    FreeRTOSConfig.h
+ *    a. If configUSE_16_BIT_TICKS is 1, then each event group contains 8 usable event bits.
+ *    b. If configUSE_16_BIT_TICKS is 0, then each event group contains 24 usable event bits
+ * 2. configUSE_16_BIT_TICKS configures the type used to hold the RTOS tick count, so would seem unrelated to the event groups feature.
+ *    Its effect on the EventBits_t type is a consequence of FreeRTOS’s internal implementation, and desirable as configUSE_16_BIT_TICKS
+ *    should only be set to 1 when FreeRTOS is executing on an architecture that can handle 16-bit types more efficiently than 32-
+ *    bit types.
+ * 
+ * NOTE: Access by Multiple Tasks
+ * 1. Event groups are objects in their own right that can be accessed by any task or ISR that knows of their existence. Any number of tasks
+ *    can set bits in the same event group, and any number of tasks can read bits from the same event group.
+ * 
+ * NOTE: Event Management using Event Groups
+ * APIs are explained above
+ * 
+ * 
+ *****************************************************************************************************************************************/

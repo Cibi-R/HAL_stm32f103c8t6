@@ -32,10 +32,10 @@ int main(void)
 #if 0
 	Flash_App_Test();
 #endif
-
-	UART1_Test_App();
-
 #if 0
+	UART1_Test_App();
+#endif
+#if 1
     FreeRTOS_Task_Demo();
 #endif
 	while (1);

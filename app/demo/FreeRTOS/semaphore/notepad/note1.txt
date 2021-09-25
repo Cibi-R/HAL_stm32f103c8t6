@@ -1,0 +1,28 @@
+
+
+/*****************************************************************************************************************************************
+ * Semaphore
+ * 1. Semaphore was proposed by Dijkstra in 1965 which is a very significant technique to manage concurrent processes by using a simple 
+ *    integer value, which is known as a semaphore.
+ * 2. Semaphore is simply a variable which is non-negative and shared between threads. This variable is used to solve the critical 
+ *    section problem and to achieve process synchronization in the multiprocessing environment.
+ *    a. Binary semaphore
+ *    b. counting semaphore
+ *  
+ * Binary semaphore:
+ * This is also known as mutex lock. It can have only two values – 0 and 1. Its value is initialized to 1. It is used to implement the 
+ * solution of critical section problem with multiple processes.
+ * 
+ * Counting semaphore:
+ * Its value can range over an unrestricted domain. It is used to control access to a resource that has multiple instances.
+ * 
+ * Limitations:
+ * 1. One of the biggest limitation of semaphore is priority inversion.
+ * 2. Deadlock, suppose a process is trying to wake up another process which is not in sleep state.Therefore a deadlock may block indefinitely.
+ * 3. The operating system has to keep track of all calls to wait and to signal the semaphore.
+ * 
+ * Binary semaphore used for synchronization:
+ * 
+ * 1. 
+ * 
+ *****************************************************************************************************************************************/

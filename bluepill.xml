@@ -8,12 +8,11 @@
 	<!ELEMENT mcuId (#PCDATA)>
 	<!ATTLIST board id CDATA #REQUIRED>
 ]>
-
 <targetDefinitions>
-  <board id="bluepill">
-    <name>bluepill</name>
-    <dbgIF>SWD</dbgIF>
-    <dbgDEV>ST-Link</dbgDEV>
-    <mcuId>stm32f103c8tx</mcuId>
-  </board>
+	<board id="bluepill">
+		<name>bluepill</name>
+		<dbgIF>SWD</dbgIF>
+		<dbgDEV>ST-Link</dbgDEV>
+		<mcuId>stm32f103c8tx</mcuId>
+	</board>
 </targetDefinitions>
